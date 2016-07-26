@@ -1,0 +1,1675 @@
+linux 课程：
+   1.Linux安装
+   2.Linux的常用命令
+   3.Linux系统启动和磁盘分区
+   4.Linux rpm 软件包管理
+   5.Linux 用户与权限
+   6.Linux 服务进程和任务计划
+   7.Linux lamp 环境编译
+   8.Linux Apache 服务器
+
+2016-6-25
+
+第一部分：
+----------------------------
+Linux常用指令：
+1.常用操作
+2.系统目录结构
+3.文件管理
+4.目录管理
+5.用户管理
+6.文件搜索
+7.内容搜索
+8.压缩包管理
+9.网络设置
+10.shell常用技巧
+11.防火墙设置
+12.帮助方法
+--------------------------
+     在Linux中的一切都是文件(不区分什么txt，doc)，后缀名不重要
+----------------------------------
+
+常用操作：
+  1)/root    root用户的家目录或宿主目录
+  2)ls       查看当前目录下有哪些目录和文件|查看目录
+  3)cd       切换目录或直接回到家目录
+  4)cd -     切换最近使用的两次目录(不停的使用该命令，可以在刚刚使用的两个目录之间来回切换)
+  5)pwd      查看自己当前的位置
+  6)ctrl+c    强制中止
+  7)clear     清空当前屏幕(或：ctrl+l)
+
+--------------------------------
+关闭/开启 sendmail邮件服务
+	service sendmail stop
+	service sendmail start
+------------------------------
+将光盘上的东西挂载到系统中
+1:确保连接了光驱
+2:确保光驱中有东西
+
+mount /dev/cdrom /media    (mount 源文件(硬件)  目标目录):将光驱中的文件挂载到 /media 上
+
+umount /media    取消挂载
+(cdrom->hdc   cdrom 是hdc的快捷方式(Linux中称为软连接))
+
+df  查看硬件挂载表(记录了文件目录和硬件设备的对应关系)  硬件格式化之后才能挂载 df -T
+------------------------------
+查看系统中是否安装了Apache
+rpm -qa |grep httpd      查看安装的所有的软件，|grep httpd  是从查看的结果里面筛选出包含 httpd 的结果
+
+查看一个rpm包中安装了些什么文件
+rpm -ql httpd-devel-2.2.3-43.el5.centos.i386.rpm
+--------- -------------------
+(linux中,鼠标滑过就相当于复制了，点右键粘贴)
+ctrl+u    //快速擦除当前输入的命令
+---------
+apache  所在目录：/usr/sbin        启动Apache：apachectl -k start
+
+apache 的配置文件在: /etc/httpd/conf/httpd.conf
+-----------------------------
+移动文件：mv aa.html html/   将aa.html 移动到html目录里
+-------------------
+cat /etc/sysconfig/network-scripts/ifcfg-eth0
+
+cat 命令只看内容，不编辑
+------------------------
+
+linux根目录下的目录分别的作用是：
+ 1. /root     root用户的家目录
+ 2. /home     普通用户的家目录
+ 3. /dev      硬件设备
+ 4.  /media    空目录，挂载光盘的
+ 5.  /boot     启动文件(内核文件，init镜像文件)
+ 6.  /etc     配置文件
+ 7. /bin      所有的用户都可以执行的程序
+ 8. /sbin     root用户才可使用的程序(但是，有些程序在写全路径时，非root用户也可用:/sbin/ifconfig(可以看ip，但是不能改变))
+ 9. /usr        不是系统默认安装的东西一般会放在此目录下(尤其是放在/usr/bin 或 /usr/sbin)
+ 10.  /mnt   空目录，仅供测试使用
+ 11.  /var   主要放置日志文件
+ 12. /tmp   临时文件夹(用过后会被删除)
+
+ -------------------------############------------------
+shell 技巧：
+
+1：tab补全
+2： !cat    历史中，最近使用的以cat开头的命令
+3: date=`date "+%Y-%m-%d"`            //将`` 之间的东西 赋值给date       尽量不留空格(#等号两边均不能有空格存在)
+4：在 Linux中，变量的创建不用加 $  (如上3:所示)   但是，输出要加$ (echo $date)
+5:  连接字符串：echo "jjjjj${date}jjjjj"
+     jjjjj2016-6-28jjjjj
+
+------------------#############-------------------
+ 文件管理：
+  1.创建文件
+  touch text.txt  (创建，但是不编辑)
+
+  linux 中支持集合式的操作： touch file{1..5}.txt   创建5个文件
+
+  vi text.txt
+
+  2.删除文件
+  rm -rf file1.txt
+
+  3.修改文件
+  vi file1.txt
+
+  4.查看文件
+ vi file1.txt
+
+ cat file1.txt   (cat file1.txt|more  一页一页的查看)
+
+ head /etc/passwd  查看文件的前10行  head -1 /etc/passwd (查看前1行)
+ tail /etc/passwd  查看文件的后10行  tail -1 /etc/passwd      tail -f /etc/passwd  实时观察文件的后10行
+
+  5.查找内容 
+  cat /etc/passwd |grep root         (支持正则表达式:cat /etc/passwd |grep ^root    (以root开头的结果))
+
+cat /etc/passwd |grep -E "user1|root"   //包含user1 或root 的结果  -E 代表正则表达式
+  6.复制文件
+  cp file1.txt /mnt
+
+  7.移动文件以及文件重命名
+  mv file1.txt /mnt 
+
+  mv file1.txt fil.txt  (修改文件名，将文件移动到相同的目录下)
+  
+  8.查找文件
+  which ls  //查找命令程序
+
+  ls file*  //查找file开头的文件
+  
+  find /etc -name http*  //查找以http 开头的文件(精确查找)
+  locate   //查找file开头的文件，但是前提是先执行：updatedb (非常快)
+
+  目录管理：
+  1.新建目录
+mkdir 目录名   mkdir dir1
+
+  2.删除目录
+  rmdir dir1    
+  rm -rf dir1  (推荐使用)
+
+  3.修改目录名
+mv dir1 dir2
+
+  4.递归创建目录
+  mkdir -p a/b/c/d
+
+  5.递归查看目录
+  tree dir1      //查看dir1目录下的目录及文件
+
+用户管理：
+1.添加用户
+useradd user1
+2.设置密码
+passwd user1
+3.删除用户
+userdel -r user1    (-r 的意思是：删除与user1相关的所有别的文件)
+4.查看用户：
+id user1
+cat /etc/passwd |grep user1
+
+压缩包的使用：
+gz压缩包(Linux下的标准压缩包)
+1:制作压缩包
+tar czf file.tar.gz file.txt
+2:查看压缩包
+tar tf file.tar.gz
+3:解压缩包
+tar xzf file.tar.gz    //解压缩到当前的文件夹
+tar xzf file.tar.gz -C /mnt/      //解压缩到  /mnt 文件夹下
+zip压缩包(能在windows下使用`)
+1:制作压缩包
+zip file.zip a.txt b.txt
+
+zip -r file.zip /var/www      (-r 意思是：将/var/www 中的文件递归压缩)
+
+2:查看压缩包
+unzip -l file.zip
+
+3:解压缩包
+unzip file.zip
+
+unzip file.zip -d a   //将file.zip 解压到 a目录下
+
+网络设置：
+一：临时设置
+ifconfig eth0 192.168.10.1
+
+二：永久设置
+vi /etc/sysconfig/network-scripts/ifcfg-eth0
+IPADDR=192.168.10.1
+
+重启网络服务进程
+service network restart
+
+三：查看网络配置
+ifconfig
+ifconfig eth0
+
+防火墙
+一：iptables
+1.查看iptables防火墙
+iptables -L -n
+
+2.清空iptables防火墙
+iptables -F
+
+3.保存防火墙策略(路径：/etc/sysconfig/iptables)
+service iptables save
+
+二：selinux
+1.查看selinux防火墙
+sestatus
+
+2.关闭selinux 防火墙
+  vi /etc/selinux/config
+  SELINUX=disabled
+  重启服务器
+
+6-26
+
+linux 系统启动和磁盘分区
+
+ 1.Linux 系统启动流程
+ 2.Linux 磁盘分区
+
+linux 系统启动流程：
+ 1.系统加载一个蓝色的grub界面
+ 2.通过grub选择Linux内核启动
+ 3.读取kernel 内核文件 /boot/vmlinuz-*
+ 4.读取init的镜像文件  /boot/initrd-*
+ 5.init 读取 /etc/inittab
+ 6.读取启动级别
+ 7.读取 /etc/rc.d/rc.sysinit,完成时钟设置，主机名的读取，分区表的挂载(/etc/fstab)
+ 8.读取 /etc/rc.d/rc 脚本 ，通过该脚本吸收3级别，然后启动 /etc/rc.d/rc3.d 下所有以s 开头的服务，不启动该目录下的以k 开头的服务
+ 9.进入登录界面。
+
+
+------------------------
+在 /etc/rc.d/init.d  中的脚本(rpm安装的服务脚本) ，
+都可以使用 service httpd restart   这种方式，开启、关闭、重启服务的
+  以及使用 chkconfig --level 3 httpd on   随着系统启动
+----------------------
+
+
+查看时间：
+date "+%Y-%m-%d %H:%M:%S"     相当于： date "+%Y-%m-%d %T"
+
+ 修改时间：
+ date -s "2016/6/26 19:21:35"
+
+查看主机名：
+hostname
+
+修改主机名：
+1:临时修改
+hostname 主机名
+
+2:永久修改
+vi /etc/sysconfig/network
+
+HOSTNAME=localhost.localdomain
+
+查看级别：
+runlevel
+
+设置光驱的自动挂载：
+vi /etc/fstab (分区挂载表)
+
+/dev/cdrom    /media   iso9660   defaults   0 0
+
+测试挂载是否成功：
+mount -a
+df
+
+查看分区：
+fdisk -l
+
+从sdb上分3G分区：
+fdisk /dev/sdb
+
+按 n 键 ：新分区
+   按 p　键 ：建立第一个主分区
+        开始柱面 ：直接回车
+        结束柱面：+3072M
+
+按 p 键 ：查看分区
+按 t 键 ：修改文件系统
+按 w 键 ：保存退出
+--------------------------(但是，此时仅仅是建立了一张表)--------------
+
+格式化成ext3文件系统：
+mkfs.ext3 /dev/sdb1
+
+挂载到 /mnt 下使用：
+mount /dev/sdb1 /mnt
+
+查看挂载情况：
+df
+
+卸载硬件设备：
+umount /dev/sdb1    (umount /mnt)
+
+软件包的安装(特指rpm包)  -yum
+1.准备yum源
+2.修改yum的配置文件
+
+准备yum源(/media)
+1：挂载光盘：
+  mount /dev/cdrom /media
+
+----------------------------
+CentOS-Base.repo (网络仓库)
+CentOS-Media.repo(光盘仓库)
+------------------------
+
+
+修改yum配置文件：
+1: 进入 /etc/yum.repos.d/
+2: 将  mv CentOS-Base.repo  CentOS-Base
+3:vi CentOS-Media.repo 
+   修改的内容：
+      [c5-media]
+      name=CentOS-$releasever - Media
+      baseurl=file:///media
+      #关闭gpg签名
+      gpgcheck=0
+      #开启yum源
+      enabled=1
+      gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-5
+
+4:测试yum是否可用
+    1：yum查看
+     yum list
+    2: yum安装
+     yum -y install http*    //安装Apache  -y 表示不用再次确认
+    3：yum卸载
+     yum  remove httpd* 
+
+    4:使用yum卸载软件比较危险
+    rpm -e mysql-server-5.0.77-4.el5_4.2 --nodeps    (推荐使用)   --nodeps 意思是：截断软件之间的依赖性
+
+  6-27
+linux用户与权限：  (权限是针对人的设置在目录或文件上的)
+-----------------------------------------------------------
+
+[root@localhost mnt]# ls -l
+total 4
+drwxr-xr-x 2 root root 4096 Jun 27 15:36 rootdir
+
+rwx r-x r-x   //r :读  w:写  x：执行
+第一类人   rwx   文件所有者 (u) 
+第二类人   r-x    所有者所在用户组中的其它的用户(g)
+第三类人   r-x    所有者所在的组以外的其它用户(o)
+所有人(a=u+g+o)
+
+目录的 rwx 权限分别表示：r:查看目录中的内容
+                         w:写入和删除文件
+                         x:切入目录
+
+文件的 rwx  (针对的是这个文件的内容)              r:查看文件内容   
+                                                  w:写内容和删除内容
+                                                   x:执行(一般是脚本文件)
+
+创建和删除文件：(需要对文件所在的目录设置权限)
+
+
+设置权限：chmod
+chmod g+w,o-w file
+
+查看用户和组：
+id root
+
+将uu加入到root组：
+gpasswd -a uu root
+
+将uu 从root组中删除
+gpasswd -d uu root
+
+管理用户命令：usermod
+1:锁定一个用户：
+    usermod -L uu       (用户被锁定后就不能登录了)
+2:解锁一个用户：
+    usermod -U uu
+
+
+用户与文件的关系：
+1:chmod
+2:sudo
+3:acl
+
+ sudo 授权：(允许非root用户使用root用户的某些权限)
+    visudo
+    uu location=/usr/sbin/useradd,/usr/sbin/userdel
+    ------------------------------
+如果提示不能使用相关命令：
+  visudo
+  uu      ALL=(ALL)       ALL
+  ------------------------
+  使用有密码的sudo授权命令：
+  sudo /usr/sbin/useradd user1
+  sudo /usr/sbin/userdel -r user1
+  使用没有密码的sudo授权命令：
+   visudo
+   uu ALL=NOPASSWD: /usr/sbin/useradd, /usr/sbin/userdel
+
+  sudo /usr/sbin/useradd user1
+  sudo /usr/sbin/userdel -r user1
+
+
+执行：sudo /usr/sbin/useradd user1
+
+第二部分：
+
+1:ACL权限分配
+2:服务进程
+3:任务计划
+------------------------------
+
+ACL权限分配 (给某些特殊的人分配权限)
+ 
+ 1,添加权限
+setfacl -m u:uu:rwx /mnt/rootdir    (意思：给uu用户分配rwx 权限，针对 /mnt/rootdir 目录)
+
+-----------------------------
+让所有访问网站的人，都具有针对 /var/www/html  的rwx 的权限
+(所有的用户访问网站时，任务的执行者是：apache)
+
+setfacl -m u:apache:rwx /var/www/html
+
+-------------------------------
+
+在 /mnt 下有很多的目录，让用户 uu 针对这些目录，设置 rwx 权限
+
+setfacl -m u:uu:rwx -R /mnt          (递归设置权限 -R)
+setfacl -m d:u:uu:rwx -R /mnt          (递归设置权限 -R)   d  表示新创建的子目录和文件也赋予同样的权限
+
+----------------------
+  
+ 2,查看权限
+getfacl /mnt/rootdir
+
+ 3,删除权限
+   1)删除单个人的权限：
+      setfacl -x u:uu /mnt/rootdir
+
+   2)删除所有人的 ACL 权限
+     setfacl -b /mnt/rootdir
+
+--------------------------
+安装软件的三步：
+  1.安装软件
+  2.修改配置文件
+  3.启动服务
+  -----------------------------
+
+服务管理：
+  1:查看进程：
+    ps -ef  |grep httpd
+    pstree -p |grep httpd
+
+  2:查看端口：
+    netstat -tunpl
+
+  3:关闭进程：
+    pkill httpd  (相对安全 ,数据保存完毕，退出`)         kill -9 [pid]   通过进程号关闭进程
+
+    pkill -HUP httpd    //将进程挂起，重新读取配置文件，但是不被杀掉
+
+  top  //查看linux tasks    
+
+    Cpu(s):  0.0%us,  0.0%sy,  0.0%ni,100.0%id,  0.0%wa,  0.0%hi,  0.0%si,  0.0%st   //(id :idle(空闲))
+    Mem:    255248k total,   238444k used,    16804k free,    31656k buffers        //内存
+    Swap:  1048568k total,       12k used,  1048556k free,   151288k cached            //虚拟内存
+
+  uptime   //简单查看系统的运行情况 (用这个就够了) ,平均负载
+
+  last  //查看以往的登录信息
+
+  who   //查看同时在线的用户`
+
+
+  任务计划：(crontab)
+
+  crontab -e     //写计划
+
+  ----------------------------------
+     10 15 * * *  /sbin/init 0  
+     分 时 日 月 周   
+在每天的15:10 执行关机
+-----------------------------
+ 
+ crontab -r   //删除所有`计划
+
+ crontab -l    //查看计划
+
+------------------------
+echo 11111 >/mnt/log       //将11111输出到/mnt/log 中去(一个 > 会覆盖前文)
+echo 1111 >>/mnt/log         //追加写入
+-----------------------------
+
+* * * * *  分 时 日 月 周 
+-------------------------------------
+    10 15 * * *      //每天的15:10 分
+    */5 * * * *      //每隔5分钟
+    10 15 * * 1-5    //周一到周五的15:10 
+    10 15 * * 1,3,5   //周一 ，周三 ，周五 的15:10
+
+-------------------------------
+要求：每天凌晨的3:00 将网站制成一个压缩包，并且，压缩包的名字包含日期 ，放到 /mnt 下
+(思路，不推荐在一个时间点上(因为同一个时间点上的任务是并发执行的，有时候，一个计划的实施，要依赖另一个计划的完成,这个时候就容易出问题)执行多个计划，可以将要执行的任务卸载一个shell 脚本中，从上到下执行)
+
+  shell脚本： webbak.sh  (给脚本加上执行的权限：chmod a+x /root/webbak.sh)
+  ------------------
+          #!/bin/bash
+          #webbak.sh
+
+          date=`date "+%Y-%m-%d"`
+
+          zip -r /var/www/web-${date}.zip /var/www/html/
+
+          mv /var/www/web-${date}.zip /mnt
+  -----------------------
+ crontab -e  
+   0 3 * * *  /bin/bash /root/webbak.sh 
+
+--------------------------------------
+
+安装编译Apache源代码：
+ 1.解压(生成编译配置文件)
+ cd /lamp/httpd-2.2.9
+ ./configure --prefix=/usr/local/apache2/ --sysconfdir=/usr/local/apache2/etc/ --with-included-apr --enable-so --enable-deflate=shared --enable-expires=shared --enable-rewrite=shared
+ 2.编译
+ make
+
+ 3.安装 
+ make install
+
+4.修改配置文件
+
+5.启动服务 
+/usr/local/apache2/bin/apachectl -k start
+ 
+ ------------------
+ 可以在文件 /usr/local/apache2/bin/apachectl 中做出如下的修改：
+  case $ARGV in
+    start|stop|restart|graceful|graceful-stop)
+    $HTTPD -k $ARGV
+    echo "apache $ARGV successful!"          //唯有这一句是新添加的 但是：/usr/local/apache2/bin/apachectl &>  /dev/null 则这句输出就被扔到 黑洞设备中了。就看不到了
+    ERROR=$?
+    ;;
+
+
+
+6.重新加载配置文件：
+pkill -HUP httpd  
+
+注意：建议公司正在响应的服务器，不要随便重启Apache，而是使用上面的方法，让进程重新加载配置文件。
+
+6-29
+
+----------------####################------
+1: linux 的字符浏览器：
+ elinks http://192.168.174.10/index.html
+
+2:  /etc/rc.d/rc.local   是计算机进入登录框前启动的最后一个脚本程序。所以可以在其中设置一些程序的开机启动(写的脚本必须要测试： bash /etc/rc.d/rc/local)
+ 
+3:  系统中，不用写出全部的路径就能找到的命令： echo $PATH
+   $PATH 中的包含的目录下的可执行文件，都可以直接写。
+
+4:  在Linux 中、有一个黑洞设备：/dev/null  
+   在 bash 环境中，echo "jjjjjjj"    会输出： jjjjjjj   但是如果将这个命令写到 /dev/null中，则 不会在 bash 中输出
+  在 bash 中，输入： kkkk 系统会提示：-bash: kkkk: command not found  
+    如果将其写到 /dev/null 中。：kkkk > /dev/null   还是会有`上面的提示  ` 但是：如果这么写：kkkk &> /dev/null 就不会有提示(前面的命令无论对错，都没有提示,将所有的提示都扔到黑洞里去了)
+
+5:制作快捷方式：
+  cd /root
+  ln -s /media/ media       //在 /root中制作一个快捷方式 media  指向 /media
+
+6: 在vim 中显示行号：
+:set nu
+:set nonu
+
+-----------------##############----------
+ linux apache 服务器
+---------------------------
+1.apache 基本知识：
+  1)apache 主目录：
+    /usr/local/apache2
+  2)网站根目录：
+    /usr/local/apache2/htdocs
+  3)配置文件：
+    /usr/local/apache2/etc/httpd.conf
+                                       (还有extra 里面的一些配置文件)
+  4)应用程序(httpd 已经是一个只有计算机看懂的二进制文件了)：
+    /usr/local/apache2/bin/httpd
+  5)服务脚本(启动脚本)：
+    /usr/local/apache2/bin/apachectl
+                                      //apachectl 是用来传输一些参数来控制真正的程序: httpd
+  6)启动服务：
+    /usr/local/apache2/bin/apachectl -k start
+    /usr/local/apache2/bin/apachectl -k restart
+  7)停止服务：
+    /usr/local/apache2/bin/apachectl -k stop
+  8)查看进程：
+    pstree -p |grep httpd
+  9)查看端口：
+    netstat -tunpl |grep :80  
+
+  10)设置开机启动：
+    1： 在 /etc/rc.d/rc.local 脚本下 添加:
+      /usr/local/apache2/bin/apachectl start
+    2：使用 bash /etc/rc.d/rc.local 测试一次
+
+2:apache 配置文件:
+  1)apache 主目录：
+    ServerRoot "/usr/local/apache2/"       (不用更改)
+  2)监听端口：
+    Listen 80
+  ----------------------
+   apache 的静态模块启动就加载到内存中了，动态的模块，在用到的时候再加载到内存中
+   -------------- 
+  3)加载动态模块：
+   LoadModule php5_module  modules/libphp5.so 
+  4)apache 进程的执行者：
+   User daemon
+   Group daemon       //可以改成apache
+  5)服务器域名：
+  ServerName 192.168.174.10:80   (可写可不写，配置文件中是注释的)
+
+  6)网站根目录：
+  DocumentRoot "/usr/local/apache2//htdocs"   (这里的//htdocs 前的双斜线和单斜线是一个意思)
+-----------------------------
+/usr/local/apache2/etc/httpd.conf 中对于网站的根目录 /usr/local/apache2/htdocs  进行了权限的设置：
+     Order allow,deny         (意思是：允许但是拒绝)  , 表示但是的意思`
+    Allow from all          (意思是：允许所有的人)
+                       //因为 没有写拒绝谁，所以所有的人都可以放问这个文件夹。
+--------------------------------------
+
+ 7)错误日志：
+   /usr/local/apache2/logs/error_log     //记录错误的或者是不正常的操作
+
+ 8)解析.php脚本
+  AddType  application/x-httpd-php.php
+ 
+ 9)控制错误页面的输出：
+ ErrorDocument 404 missing.html                 (404 表示文件不存在 )
+
+3:apache 虚拟目录：
+ http://localhost/mnt      mnt 目录本来不在网站的根目录下，而是在系统的其它目录，这个时候就得做虚拟目录
+   步骤：
+     1:在Apache的配置文件中 添加：
+        Alias /mnt "/mnt"
+    
+        <Directory "/mnt">     (这是网站目录的权限)
+        Options Indexes MultiViews
+        AllowOverride None
+        Order allow,deny
+        Allow from all
+        </Directory>
+      2:重启apache
+
+4:apache 目录权限：
+ 1)服务权限 (apache 服务器把控的权限)
+ 2)系统权限 (linux 系统把控的权限)
+5:apache 虚拟主机: //尤其要会  (目的是在一台服务器上架设多个网站)
+  
+  配置步骤：
+    1.将 /usr/local/apache2/etc/httpd.conf  中的 Include etc//extra/httpd-vhosts.conf 打开
+    2.进入 /usr/local/apache2/etc/extra/httpd-vhosts.conf  
+      NameVirtualHost 192.168.174.10:80
+
+      <VirtualHost 192.168.174.10:80>
+        DocumentRoot "/web/bbs"
+        ServerName bbs.lampym.com
+        <Directory "/web/bbs">
+            Options None
+            AllowOverride None
+            Order allow,deny
+            Allow from all
+        </Directory>
+      </VirtualHost>
+
+      <VirtualHost 192.168.174.10:80>
+          DocumentRoot "/web/www"
+          ServerName www.lampym.com
+          <Directory "/web/www">
+              Options None
+              AllowOverride None
+              Order allow,deny
+              Allow from all
+          </Directory>
+      </VirtualHost>
+
+      <VirtualHost 192.168.174.10:80>
+          DocumentRoot "/web/keji"                  //网站的根目录
+          ServerName keji.lampym.com              //服务器名
+          <Directory "/web/keji">                 //设置网站根目录的权限
+              Options None
+              AllowOverride None
+              Order allow,deny
+              Allow from all
+          </Directory>
+      </VirtualHost>
+
+      3:重启apache
+
+//1：有几台服务器就建立及格虚拟主机
+  // 2：可以统一的将所有的网站的根目录都放在  /web 之下
+-----------------------------
+将 <Directory "/usr/local/apache2//htdocs">中的
+ Options Indexes FollowSymLinks          改为：Options None 
+      // FollowSymLinks    支持快捷方式(将其删除，则快捷方式不会列出来(在没有 index 文件的情况下))
+      //当将Indexes  变成 None时 在没有 默认首页( index 文件的情况下)时，会报请求不允许
+      MultiViews 多视图：  访问网站 /index  就等于 /index.html
+----------------------------------
+欲使 Apache 支持 php 则，在Apache的配置文件中要有：
+ 1： AddType  application/x-httpd-php.php
+ 2:  LoadModule php5_module  modules/libphp5.so 
+ -----------------------------------
+
+6-30
+
+------------------------
+windows  中的域名解析表：
+ C:\Windows\System32\drivers\etc\hosts
+ ----------------------- 
+
+------------------------------------------------##############---------------------
+解决 CentOs 自动安装的 PHP 不支持 MySQL
+
+[日期：2009-11-04] 来源：www.viyin.net  作者：viyi [字体：大 中 小]
+在CentOS 5.3上装一个Discuz论坛,发现Discuz的提示信息里显示不支持MySQL：
+
+mysql_connect() 不支持 请检查mysql 模块是否正确加载.
+
+查看/usr/lib/php/modules/里面根本没有mysql.so
+
+找到CentOS 5.3安装盘，找到CentOS目录下的
+
+php-mysql-5.1.6-20.el5.i386.rpm
+
+php-pdo-5.1.6-20.el5.i386.rpm
+
+上传，安装：
+
+再查看so文件：
+
+ls /usr/lib/php/modules/
+
+dbase.so  ldap.so  mysqli.so  mysql.so  pdo_mysql.so  pdo.so  pdo_sqlite.so  phpcups.so
+
+mysql.so存在了。
+
+配置/etc/php.ini
+
+extension=mysql.so
+
+extension=mysqli.so
+
+extension=pdo_MySQL.so
+
+保存，重启httpd
+
+刷新网页，还是显示mysql_connect() 不支持
+
+重启了一下MySQL，刷新网页，MySQL已经能连上了。
+---------------------------------------------##############--------------------
+
+
+----------------------- shell编程 ---------------------------
+
+(1)shell作用和使用技巧
+ 1: bash中的命令的别名
+  添加：alias ddd='df -Th'
+  查看所有：alias
+  删除：alias ddd
+   //想要永久的使用这个别名的话：将这个命令放在 ~/.bashrc
+
+2:bash的重定向：(将原本输出到屏幕上的内容，输出到一个文件中去)
+  例子： ls /    会将 根目录 / 下的所有的下一级文件打印在屏幕上。但是如果这么写的话。
+         ls / > /root/roo.txt    会将结果输出到 /root/root.txt 中
+
+-----------------------------------------------
+  重定向标准输出： >       覆盖式重定向  (正确重定向，如果前面的命令是正确的，则将结果重定向) > 相当于 1>
+                   >>       追加式重定向   (正确重定向，如果前面的命令是正确的，则将结果重定向)  >> 相当于 1>>
+                   2>                     (错误重定向，如果前面的命令是错误的，则将结果重定向)
+                   2>>                 (错误重定向，如果前面的命令是错误的，则将结果重定向)
+                   &>       不论前面的命令是对还是错，都覆盖式重定向
+          如果想实现无论前面的命令正确与否，都追加式重定向：
+            1:写一个脚本。里面有正确的命令，也有错误的命令：
+               #!/bin/bash
+               #red.sh
+               ls /
+               qqqqqqqq
+
+             bash red.sh 1>> net.txt 2>&1 
+                  
+
+3:bash 的管道操作：
+   管道的操作符: |
+     free -m   //查看内存的使用情况
+     free -m |grep -i men |awk '{print $4}'      -i 表示忽略大小写  
+         意思是： 将 free -m 的结果中的含有 mem 的那一行取出来，然后再将这一行的第四列取出来`
+
+(2)shell文件权限和脚本执行
+   shell脚本：
+     1.用途：完成特定的较为复杂的系统管路任务
+     2.格式：集中保存多条Linux命令，普通文本文件
+     3.执行方式：按照预设的顺序依次解释执行
+
+脚本文件中包含的内容：
+   #!/bin/bash          运行的环境
+   #说明性的文字         注释信息
+   可执行的Linux命令行
+
+  执行shell脚本的方式：
+  1:bash test.sh
+  #不需要在脚本的首行写解析器： #!/bin/bash
+  #不需要给test.sh 设置执行权限
+  2:chmod a+x test.sh
+   ./test.sh
+   #需要在首行写解析器
+
+
+ftp 目录统计脚本：
+ --------------------------
+ #!/bin/bash
+#test.sh
+
+date >> /var/log/pubdir.log
+
+ls -lhR /var/ftp/pub >> /var/log/pubdir.log
+
+rm -rf /var/ftp/pub/
+
+-------------------------------------
+
+1:shell的输出是使用 echo 并且本身就带有换行(在 echo 这一行执行完毕之后)
+2:shell 程序不需要 ; 结尾
+3:linux 中的所有的变量以英文字母或下划线开头，严格区分大小写
+
+--------------------------------
+(3) shell的变量类型和运算符的使用
+
+ shell变量的种类：：
+  1：用户自定义的变量：由用户自己定义，修改和使用
+  2:预定义变量：bash预定义的变量，不能直接修改
+  3:位置变量：通过命令行给程序传递执行参数
+
+1：用户自定义的变量：
+      变量的复制和引用：
+        1.定义新的变量：
+          格式：  变量名=变量值
+        2.查看变量的值：
+          格式：echo $变量名           (通过$符号引用指定名称的变量值)
+
+       变量连接字符串：
+         name='user1'
+         echo "my name is ${name}db"      注意与php的区别：echo "my name is {$name}db";
+
+       从键盘上接收信息，并给变量赋值：
+        read -p "please input name:" name
+        echo "my name is $name"
+                                      格式：read [-p "提示信息"] 变量名
+
+     各种引号的作用：
+      1：双引号：""      允许通过$符号引用其它的变量的值 
+      2：单引号：''      禁止引用其它变量的值，$符号视为普通的字符
+      3: 反引号： ``      可以将命令执行的结果输出给变量
+
+      删除变量：
+        格式： unset 变量名
+
+
+2:位置变量：(将参数传到脚本的内部使用)
+  表示为 $n             n 在 1-9 之间  
+     ./test.sh one two three four five six seven eight nine 
+
+      --------------test.sh--------------
+     str=$1+$2
+     echo $str              
+     --------------------------           //结果是：   onetwo
+
+3:预定义变量：(是位置变量的一个补充)
+  表示的形式：
+    $# :命令行中位置参数的个数
+    $* :所有的位置参数的内容         (可以看到超过9 个参数的内容，弥补了位置参数的个数的限制，超过了9个)
+
+    $? :  1:上一条命令执行后返回的状态，当返回的状态值为0 时，表示执行正常，非0 值表示执行异常或者出错
+           2: 可以得到所有的条件测试返回的状态 0 表示测试成功(为真 )，非0 表示测试失败
+
+    $0 :当前执行的进程/程序名
+---------------------------test.sh-------------------
+            [root@localhost mnt]# vi test.sh
+            #!/bin/bash
+            #test.sh
+
+            echo "当前脚本的参数的个数有：$# 个"
+            echo "当前脚本的参数是：$*"
+            echo "当前执行的脚本的名称是：$0"
+----------------------------------------------
+
+(4) shell的输入和输出：
+   echo -e "my name is user1 \n my name is user2 "        -e 可以解析双引号中的转义字符
+
+   echo 语句的末尾自带换行，要想取消换行：echo -n "your name:"
+
+   echo      可以输出一个空行
+
+   //给输出的字符上色：
+    echo -e "httpd staring   \033[32;40m [ok] \033[0m"
+
+       \033[前景颜色;背景颜色m 
+
+       \033[0m        表示恢复到系统的颜色
+
+  ---------------字符界面的前景颜色--------------------
+  30    黑色
+  31    红色
+  32    绿色
+  33    棕色
+  34    蓝色
+  35    紫色
+  36    青色
+  37    白色
+  -----------------------------------------------------
+  ---------------字符界面的背景颜色--------------------
+  40    黑色
+  41    红色
+  42    绿色
+  43    棕色
+  44    蓝色
+  45    紫色
+  46    青色
+  47    白色
+  -----------------------------------------------------
+
+其它的输出命令：
+ more   :      cat /etc/passwd |more    //一页看不完，就再一行一行的看
+  head   :      cat /etc/passwd |head     //看前10 行
+  tail   :      cat /etc/passwd |tail     //看后10 行    cat /etc/passwd |tail -2  // 看后2 行
+
+cat    : 1: cat /etc/passwd 
+      2:    cat<<x
+                    ddddddddddddddddddddddd
+            x
+
+    heredoc   //字符串原样输出
+
+  tee :  将结果输出一份，然后还可以保存一份  :  ./aa.sh |tee menu.txt
+ nl  :   给输出的结果标上行号              cat /etc/passwd |head |nl   给/etc/passwd 输出的前10 行，并标上行号
+
+(5) shell 条件测试和流程控制：
+   常见的测试类型：
+     测试文件状态
+     字符串比较
+     整数值比较
+     逻辑测试
+
+  测试文件状态：
+   格式： [ 操作符 文件或目录 ]         //注意空格
+  常用的测试操作符：
+   -d :测试是否为目录
+   -e :测试文件或目录是否存在
+   -f :测试是否为文件
+   -r :测试当前用户是否有读取的权限
+   -w :测试当前用户是否有写入的权限
+   -x :测试当前用户是否有执行的权限
+   -L :测试是否为符号连接文件
+
+---------------------------
+[ -f ./file ] 实例：
+  if [ -f ./file ]
+  then
+          echo "文件存在"
+  else
+          echo "文件不存在"
+          touch file
+  fi
+  -----------------------------
+ 整数值条件测试操作：
+    格式： [ 整数1 操作符 整数2 ]
+  常用的测试操作符：
+    -eq :等于
+    -ne ：不等于( not equal)
+    -gt :大于
+    -lt :小于
+    -le :小于或等于
+    -ge ：大于或等于
+
+wc -l    //显示行数   1: wc -l /etc/passwd       2: who |wc -l
+
+//如果登录的人数小于等于 10 则输出 YES
+[ `who|wc -l` -le 10 ] && echo "YES"
+
+df -Th |grep 'boot' |awk '{print $6}' |cut -d '%' -f 1
+   cut -d '%'   //以 % 作为分割符    -f 1 ：取第一部分
+
+ 字符串测试：
+   格式：
+       [ 字符串1 = 字符串2 ]    
+       [ 字符串1 != 字符串2 ]
+       [ -z 字符串 ]
+   常用的测试操作符：
+       =    ：字符串内容相同
+       !=   :字符串内容不相同
+       -z   :字符串内容为空
+
+ 逻辑测试：(也有短路开关的效果 :前面的结果能确定整个结果，那么后面的表达式就不执行了)
+  格式： [ 表达式1 ] 操作符 [ 表达式2 ]
+ 常用的测试操作符：
+     &&  ：逻辑与
+     || ：逻辑或
+     ！ ：逻辑非
+
+
+条件判断，循环控制，函数使用
+   (1) if 条件语句： 
+        ------------------test.sh--------------
+          score=83
+
+          if [ $score -lt 60 ];then
+            echo "60以下！"
+          elif [ $score -lt 70 ];then
+            echo "60-70 之间！"
+          elif [ $score -lt 80 ];then
+            echo "70-80 之间！"
+          elif [ $score -lt 90 ];then
+            echo "80-90 之间！"
+          else 
+            echo "90以上！"
+          fi
+          ------------------------------------
+    (2) case 语句：
+      ----------------------test.sh------------
+      week=5
+
+      case $week in 
+        1)
+        echo '周一'
+        ;;
+        2)
+        echo '周二'
+        ;;
+        3)
+        echo '周三'
+        ;;  
+        *)
+        echo '其它'
+        ;;
+      esac
+      ------------------------------------------
+
+  循环控制： (for 循环 |  while 循环)
+
+    ---------------------
+    echo '123'|passwd --stdin user1                   //通过标准输入，将user1 的密码设置为 ：123
+    ---------------
+
+在 shell 中，默认只支持 for in 循环   : in 后面可以是任意命令的输出结果：
+
+-----------------------------------------------------------
+     user.txt     中 有： user1 user2 user3 user4
+     for i in `cat user.txt`
+     do 
+        useradd $i
+        echo 123 |passwd --stdin $i
+     done
+                //创建 用户： user1 user2 user3 user4  都将密码设置为：123
+---------------------------------------------------------------
+ //要求：将 /etc/passwd  中的用户 取出来放入到 /mnt/user.txt
+    for i in `cat /etc/passwd |awk -F: '{print $1}'`
+    do
+       echo $i
+       echo $i >>/mnt/user.txt
+    done
+---------------------------------------------------
+另一种 for 循环的格式： 
+        for ((i=0;i<10;i++))
+        do
+        done
+
+  while 的格式：
+      while [条件]
+      do
+      done
+
+  continue 的使用： (中止本次的循环)
+    ---------------test.sh-----------------
+    for ((i=0;i<10;i++))
+    do
+      if [ $i -eq 5 ];then
+        continue
+      fi
+      echo $i
+      sleep 1
+    done
+    ----------------------------------
+    break 的使用：(中止本层的循环)
+    ---------------------test.sh---------
+    for ((i=0;i<10;i++))
+    do
+      if [ $i -eq 5 ];then
+        break
+      fi
+      echo $i
+      sleep 1
+    done
+    -------------------------
+    shift  :就将 $2 变成 $1 而原来的 $1 会被删除
+        -----------------test.sh-------------------
+          num=0
+          tot=0
+
+          while [ $# -gt 0 ]
+          do 
+            tot=$(($tot+$1))
+            shift
+          done
+          echo $tot
+          ----------------------------
+
+函数的格式：
+   function show(){
+     #statement
+     $1
+   }
+       注意：function 领域内的值，是 调用函数时传的 参数   show 4  则$1 的值是 4
+
+shell  文本操作：
+
+    find 命令查找详解：
+    正则表达式的使用：
+    grep 搜索命令的使用：
+    awk 编程的使用：
+    sed 行定位的使用：
+    sort 排序的使用：
+    uniq 唯一性的使用：
+    split 分离的使用：
+
+  find 查找命令详解：
+   1：find . -name "*.txt"
+      在当前的目录下查找以 .txt 结尾的文件
+   2: find . -name "file[1-3]*"                  (表明 find 支持一部分的正则)
+    在当前目录下查找 以file1 file2 file3 开头的文件
+   3: find . -perm 755
+     根据文件的权限查找
+   4: find -user root
+     在当前目录下 查找 所有者是 root 的文件
+    5: find . -mtime  -5
+      在当前目录下查找更改时间在 5 天以内的文件
+    6: find . -mtime  +5
+      在当前目录下查找更改时间在 5 天以前的文件
+    7: find  . -type d                             (f 表示文件   l 表示链接文件)
+      在当前的目录下，查找文件的类型是 目录的文件  
+    8: find . -size +1000000c                     (1000000c 表示1000000 字节)
+      在当前目录下，查找大小大于 1M 的文件
+    
+注意： 当使用管道操作时： find ****| find ****   后一个find 不是以前一个find 为基础查找的
+
+将 find 找到的东西 提交到后面进行 命令操作，作为后面命令的一个参数：
+    find /mnt -name 'file*'|xargs rm -rf  
+
+
+    grep 以及 正则表达式：(grep 主要用于行匹配)
+     1：grep -c "linux" file 
+       在file 文件中，一共有几行包含linux 的 内容
+     2: grep -n "linux" file 
+       在file文件中，都有哪些行包含 linux 并且将行号标出来
+      3: grep -i "linux" file     
+        忽略大小写
+      4: grep -v "linux" file
+         不包含 linux 的行
+      5: grep -E "linux" file         (-E : 正则表达式)
+
+    6: grep -E "linux$" file
+          以 linux 结尾的
+    7: grep -E "^$" user.txt     等同于：grep -Env '.+' user.txt 
+       匹配空行
+      8: grep -En '^.$' user.txt
+       只含有一个字符的行
+       9: grep -En '(very){2,4}'  file 
+         包含连续的 2-4 个very 的行
+
+awk 编程工具的使用：(主要的优势在于定位列)
+  1： awk '{print $0}' file 
+     将 file文件的每一列都取出来
+  2: awk '{print $1"\t"$7}' file 
+     将 file文件的第一列和第七列 查找出来  并以 tab 分割
+  3: cat file |awk '$0 ~/192.168.100.1/'
+     将 file中 匹配 192.168.100.1 的行查找出来
+        (~/192.168.100.1/)  :~// 表示匹配   !~//  表示不匹配
+        -------------------------------------------------------------------------------------
+        ---------------------awk 编程补充------------------------------------------------
+         (1) awk 模式匹配：  //任何 awk 语句都是有模式和动作组成的，模式是一组用于测试输入行是否需要执行动作的规则。动作是包含语句，函数和表达式的执行过程。
+          　 awk 模式匹配通常用到正则表达式。awk 支持 ? + 两个拓展的元字符。而，grep和sed 不支持。
+          awk '/^$/{print "This is a blank line."}' input
+//每当匹配到一个空白行，就输出 This ...... 这句话。
+          
+          (2) 记录和域：
+           awk 认为输入的文件是结构化的，将每个输入文件行定义为记录，行中的每个字符串，定义为 域，域之间使用空格，Tab 键或其他的符号进行分割，分割域的符号称之为 分隔符。
+
+           awk 定义域操作符 $ 来指定执行动作的域。 $ 后接数字或是变量来 标识 域的位置。编号从 1 开始。$0表示所有的域。
+           // $ 后面接数字的例子：
+            awk '{print $1,$2,$3}' input 
+          //$ 后面接变量的例子：
+          awk 'BEGIN {one=1;two=2} {print $(one+two)}' input 
+           //BEGIN 字段中的语句是遍历输入文件文本之前执行的。
+
+           改变分割符的两种方法： 
+            1. -F          -F"\t"   //将分隔符改成 Tab 键 
+             awk -F"\t" '{print $3}' input 
+            2.(更方便) 使用 awk 的环境变量 FS ,可以通过在 BEGIN 字段中设置 FS 的值来改变分割符。
+            awk 'BEGIN {FS=","} {print $0}' input 
+
+            对于记录   wer\t\taa  来说：
+            (1) FS="\t"      //将一个 Tab 键 作为分割符
+            (2) FS="\t+"    //将 一个或多个 Tab 键 作为分割符。  (可见设置分割符，支持正则)
+
+         (3) 关系和布尔运算符：
+            awk 'BEGIN {FS=":"} {print $1~/root/}'  /etc/passswd 
+            //打印第一个域中匹配 root　的记录
+            awk 'BEGIN {FS=":"} {print $0!~/root/}'  /etc/passswd 
+            //打印所有域中都不匹配 root  关键字 的记录。
+
+        　awk 在进行模式匹配的时候，通常使用到条件语句。
+             awk 'BEGIN {FS=":"} {if($3<$4) print $0}' /etc/passwd 
+              //将所有的第三个域的值小于第四个域的值的记录 打印出来。
+
+            在关系运算符中。== 表示精确匹配   ~ 表示模糊匹配：
+            awk 'BEGIN {FS=":"}{if($3==10||$4==10) print $0}' /etc/passwd
+            //将 第三个域或者第四个域的值等于 10 的所有的记录打印出来
+            awk 'BEGIN {FS=":"}{if($3~10||$4~10) print $0}' /etc/passwd
+            //将 第三个域或者第四个域的值中有包含 10 的所有的记录打印出来
+
+    关系运算符：< <= > >= == != ~ (正则匹配) !~  (不匹配正则表达式)
+    逻辑运算符：&& || !
+
+      (4) 表达式：
+        一个 awk 表达式 可以由 数值，字符常量，变量，操作符，函数和正则表达式 自由组合而成。
+
+        awk　　的变量 是区分大小写的。awk 变量是不需要声明变量类型的，每种变量有两种类型的值：字符串值和数值。
+        变量的默认的数值是 0 。默认的字符串值是空、
+         z="very" "good"   //用空格分隔两个字符串，将 z 赋值为 very good
+
+     eg : awk '/^$/{print ++x}' input
+     //每匹配到一个空白的记录，就打印 x 
+
+     (5) 系统变量：
+       NF ：当前记录的域的数量
+       NR : 当前记录数  //在文件中的第几行
+       FILENAME ：当前文件名
+       FS :字段(域)分隔符 ，默认是 空格键
+       IGNORECASE 当值为 1 的时候，忽略大小写
+
+       eg: awk 'BEGIN {FS=":"} {print NF,NR,$0} END {print FILENAME}' input
+
+
+      (6)格式化输出：
+        awk 的一个大的功能就是产生报表。报表就要求按预定的格式输出。使用 printf 输出语句。 基本的语法：
+         printf (格式控制符,参数)
+          控制符分为 修饰符和格式符
+          修饰符：
+           -      左对齐
+           width    域的步长
+           .prec    小数点右边的位数
+
+          格式符：
+            %c      ASCII字符
+            %d      十进制整型
+            %e      浮点数，科学计数法
+            %f      浮点数
+            %o      八进制
+            %s       字符串
+            %x       十六进制
+
+      (7) 内置字符串函数：
+gsub(被替换字符串，替换字符串)
+gsub(被替换字符串，替换字符串,第几个域)
+index(s,t)  返回s 中的第一个t 出现的位置。(从1 开始)
+//js 中的indexof()  是从0 开始的
+match(s,t) 测试 s 是否包含 t 字符串,成功，返回 t 的首位置,否则返回0
+sub(r,s,t) 将t中第一次出现的r替换成s
+substr(str,6) 返回str从第六个字符开始的后缀部分
+substr(str,6,9) 返回str从第六个字符开始长度为9的后缀部分
+
+
+  ----------------------------------------------------------------------------------------------------
+  ----------------------------------------------------------------------------------------------------
+
+
+sed 行定位的使用：(sed 的操作不影响原文件)
+   1: sed -n '2'p file        只答应第二行，不打印其它行          (p 表示 print 打印)
+  2： sed -n '2,5'p  file       打印第二行到第五行的内容
+3:  sed -n '/lose/'p  file     打印匹配 lose 的行
+  4：sed -n '4,/lose/'p file      打印从第四行 到匹配 lose  行的内容
+ 5: sed '2,3'd file         打印除了 第二行和第三行之外的 file 中的其它的行    (d 表示 delete 删除 ,但是不会删除源文件的内容)
+6： sed -n '2,$'p file      打印第二行到最后一行的内容 
+----------------------------------------------------------
+--------------------------sed 添加说明--------------------
+一：在脚本(如 aa.sed)中执行 sed 命令， 在 脚本的首行:    #!/bin/sed -f     (-f 一定得有 )
+
+二：编辑文本
+  1.追加文本：(添加在匹配的行后)
+    命令行中，格式： sed '/file/a\hello' aa    // 在aa文件中，匹配 file 的行，追加 hello
+    脚本中：   
+       -----------aa.sed---------
+       #!/bin/sed -f
+       /file/a\
+       hello\               # \ 表示换行
+       ---------------------
+
+   2.插入文本(插入在匹配的行前)
+     命令行： sed '/file/i\text'  aa               /file/ 也可以换成相应的行号
+     脚本中  (参见追加脚本的格式)
+
+   3.修改文本
+      命令行：sed '/file/c\text' aa
+      脚本中 (参见追加脚本的格式)
+
+   4.删除文本 
+      命令行： sed '1d' aa     //删除第一行
+
+   5.替换文本:
+      sed 's/查找的文本/替换的文本/g' aa          //g 表示替换所有 ，不加的话，就替换每一行的第一个找到的
+      sed -n 's/old/new/gp' aa               //打印替换后的文本
+      sed -n 's/old/new/2p' aa        //替换第二次匹配到的
+      sed -n 's/old/new/w bb' aa        //w 表示将输出定向到 bb 文件，没有的则创建之
+
+    6.sed 命令可以将其他文件中的文本读入，并附加到指定的地址后。
+      sed '指定的地址 r 其他文件名' inputfile
+
+    7.退出命令：(找到指定的地址后就退出)
+    sed '指定地址 q' inputfile
+
+    8.sed y 命令将被变换的字符序列的字符逐个替换成变换字符序列：
+      sed 'y/123/xyz' input       //将 input文件中的 1替换成x 2替换成y 3替换成z 
+
+    9.{} 的作用：在定位行上执行命令组(多个组合的命令，效果同 -e)
+      sed -n '/file/{p;=}' input  //将input文件中匹配 file 的行打印出来，并且打印出行号。
+      sed '/file/{s/i/I/g;s/3/t}' input //将input文件中匹配 file的行中的i全部替换成I ，第一个3替换成t
+
+    10, 利用 ; 分割多个编辑命令：
+      sed 's/file/FILE/ ; s/aaa/AAA/' input
+      sed -e 's/file/FILE/ ' -e 's/aaa/AAA/' input
+  -----------------------------------------------------------------
+  -----------------------------------------------------------------
+
+uniq  行定位的使用：
+   1：uniq -c file     打印紧挨着的重复行出现 的次数 (但是不是紧挨着的，就不会统计在一起，所以，为了解决这个弊端，需要和 sort 结合使用 cat file |sort |uniq -c)
+  2： uniq -d file      只打印紧挨的重复的行
+
+sort  排序：
+  1： sort file      将文件的内容按照字母的升序进行排序  
+  2:　sort -r file     按照字母的降序进行排序
+  3:   cat file |sort -t: -k1 -r     以 ： 分割，以第一列为标准，倒序排列  (默认的分割符是 空格)
+
+split  行分割：
+  split -5 file spt   //将 file 文件 每5 行进行一次分割，放到以 spt 开头的文件中，会形成sptaa,sptab .....等文件     
+ 
+ -------------------------------------------------
+ 小实例：(对 apache 服务器访问量的统计  apache 的访问的日志文件： /var/log/httpd/access_log)
+   cat /var/log/httpd/access_log |awk '{print $1}' |sort |uniq -c
+   -----------------------------------------------------
+
+linux 的启动流程和脚本服务：
+  
+
+如何自己写一个服务脚本，以及将该脚本加入到 rpm 包中(改造成标准的rpm 脚本: 通过 chkconfig 叫自定义脚本加入开进启动，通过 service 开启或关闭服务)。
+  1: 自定义服务脚本：
+  #!/bin/bash
+  #mytest
+
+  case $1 in
+          start)
+                  echo 'mytest start!'
+                  ;;
+          stop)
+                  echo 'mytest stop!'
+                  ;;
+          restart)
+                  echo 'mytest restart!'
+                  ;;
+          *)
+                  echo 'please input [start|stop|restart]'
+                  ;;
+  esac
+  2： 叫服务脚本改造成标准的 rpm 脚本：
+   将 mytest 脚本 放在 /etc/rc.d/init.d 下。这时，就可以 使用 service mytest start 启动脚本(只要脚本在这个目录下，service就可以管理)。但是还不能使用：chkconfig 命令
+     为了能使用 chkconfig  命令，就在 脚本的前面加上 ：
+       # chkconfig :2345 90 20              (2345 表示：runlevel 90 表示：开启的时候靠后 20 表示：关闭的时候靠前)
+       # description: Mytest service daemon
+  //第一次 使用 chkconfig 时。应该先启动： chkconfig mytest on
+
+
+使用 shell 编写一个字符菜单界面：
+  菜单管理的实例：           (利用 cat<<a #statement a  (末尾的a 顶格) 保持原格式的输出)
+   1：用户添加
+   2：用户删除
+   3：修改密码
+   4：查看硬盘空间的使用情况
+   5：查看内存空间的使用情况
+   6：退出菜单 
+
+
+   ------------------------------------
+shell 包含 其它的 shell脚本文件：　　　. menu.sh         ( . 表示包含的意思)
+---------------------------
+ while 如何形成死循环：   
+  while true 
+  do
+      echo 1
+      sleep 1
+  done
+  -------------------------
+
+shell 编写 邮件报警 脚本： 
+  1:web 服务器监控
+  2：mysql 数据库监控
+  3:disk 硬盘使用监控
+
+ POSTFIX 邮件服务器的准备：
+  (发邮件：POSTFIX 端口：25   收邮件 DOVECOT     pop3协议端口：110  imap协议端口：143)
+   1: 删除 sendmail 服务器 
+   2: 安装两个软件：POSTFIX  (打开 25 端口 )  DOVECOT (打开 110 端口)
+
+   配置 postfix :
+     1: vi /etc/postfix/main.cf
+         1)修改 myhostname
+         myhostname =mail.lampym.com
+         2) 修改 mydomain
+         mydomain = lampym.com
+         3) 修改 myorigin
+         myorigin = $myhostname   
+        myorigin = $mydomain
+        4) 修改 smtp 监听端口
+        inet_interfaces = all
+        5) 修改 mydestination 
+        mydestination = $myhostname,$mydomain
+        6) 修改本地网段
+        mynetworks = 192.168.174.0/28, 127.0.0.0/8
+         7) 修改 relay_domains 转发邮件域名
+        relay_domains = $mydestination
+    2: 启动 postfix 
+
+     配置 dovecot ：
+      1： vi /etc/dovecot.conf
+        1) 修改 protocols 以支持 pop3 pop3s 
+        protocols = imap imaps pop3 pop3s
+
+      2: 启动 dovecot
+
+创建两个邮箱用户： useradd user1    useradd user2
+
+------------------------------
+可以通过如下方式 发送邮件：
+  1： echo "user1->user2" |mail user2@lampym.com
+  2:  telnet 192.168.174.10 25
+       mail from:user1@lampym.com
+       rcpt to:user2@lampym.com
+       data
+       #邮件的内容
+       .               (以 . 结束，退出)
+
+---------------------------------------------
+
+想要测试 Apache 是否正常工作：
+ 1：服务得启动
+ 2：能接收数据，不能死掉
+   这个时候，用 pstree -p |grep httpd     echo $?    只能判断服务是否启动，而不能识别，服务是不是 死机了
+
+nc -w 3 localhost 80    与80 端口通讯3 秒 以此判断，Apache是不是通的 
+
+web 服务器的监控程序：
+   ------------------web.sh----------------
+   nc -w 3 localhost 80  &>/dev/null
+   if [ $? -eq 0 ];then
+       echo "服务器正常工作中！" 
+   else
+       echo "服务器工作异常！"
+   fi
+   -------------------------------------
+
+在一个终端上的 root 用户：nc -l 192.168.174.10 10000       架一个10000 端口
+在另一个终端上的 root 用户 ： nc 192.168.174.10 10000
+   那么，在第一个终端上输入的内容，在第二个终端上就能看见  (实现了简单的通讯)
+
+
+  shell 日志处理和信号捕捉:
+
+------------------------------
+对于一个脚本来说，脚本的执行过程中，会产生一个PID 在脚本结束后消失。
+ #!/bin/bash
+ #test.sh
+  tmp=$$
+echo $tmp             (此时的$tmp 显示的就是， test.sh 的进程号) 
+------------------------------
+
+以进称号为标志的临时文件：
+  ----------------------createtmp.sh--------------------
+              #!/bin/bash
+              #createtmp.sh
+
+              tmp=$$.txt
+
+              ps -e |grep httpd |awk '{print $1}' >> $tmp
+
+              for pid in `cat $tmp`
+              do
+                      echo "apache ${pid} is killed!!!"
+                      kill -9 $pid
+              done
+
+              sleep 1
+
+              rm -rf $tmp
+
+              echo "apache has been shutted down!!!!"
+-------------------------------------------------------------
+
+脚本信号捕捉技术：
+  (1) 信号的类型：   (kill -l : 用于查看信号的类型)
+     常用的信号：
+     　　SIGHUP  : 挂起进程[1]
+         SIGING  :来自键盘的中断 Ctrl + c [2]
+         SIGQUIT :从键盘退出 ctrl + \ [3]
+         SIGKILL :无条件终止 [9]
+
+Trap 信号捕捉：
+ 捕捉到一个信号后，他可能会采取下面三种操作之一：
+    1. 不采取任何行动，由系统来处理
+    2. 捕捉该信号，但是忽略它
+    3. 捕捉该信号，并采取相应的行动
+
+Trap 命令使用：
+  trap "function" signal
+   1) signal 为接收到的信号
+   2) function 为执行的函数
+常见的行动：
+ 1)清除临时文件
+ 2)忽略该信号
+ 3)询问用户是否中止脚本执行
+  ------------------------------signal.sh---------------------------
+                      #!/bin/bash
+                    #signal.sh
+
+                    trap 'show' 2
+
+                    function show(){
+                        echo "你正在按ctrl + c 键，但是程序就是不中止，你能咋滴!!!!!!"
+                    }
+
+                    i=0
+
+                    while :
+                    do
+                        i=$(($i+1))
+                        echo $i
+                        sleep 1
+                    done
+------------------------------------------------------------------------------
+
+shell 如何操作数据库：
+   1.数据库的基本操作
+   2.shell 操作数据库之 增 删 改 查
+   3.apache 日志分割
+   4.日志分割之 任务计划
+   5.apache 日志统计之mysql 数据库
+
+
+
+---------------------------------------------
+最简单的完美修改方法，修改mysql的my.cnf文件中的字符集键值（注意配置的字段细节）：
+
+1、在[client]字段里加入default-character-set=utf8，如下：
+
+[client]
+port = 3306
+socket = /var/lib/mysql/mysql.sock
+default-character-set=utf8
+
+2、在[mysqld]字段里加入character-set-server=utf8，如下：
+
+[mysqld]
+port = 3306
+socket = /var/lib/mysql/mysql.sock
+character-set-server=utf8
+
+3、在[mysql]字段里加入default-character-set=utf8，如下：
+
+[mysql]
+no-auto-rehash
+default-character-set=utf8
+
+修改完成后，service mysql restart重启mysql服务就生效。注意：[mysqld]字段与[mysql]字段是有区别的。这点在网上没人反馈过。
+
+----------------------------------------------------------
+
+shell 中执行 mysql 语句： 
+                #!/bin/bash
+                #mysql.sh
+
+                conn="/usr/bin/mysql -uroot -pkkkkkk"
+                sql="show databases;"
+
+                $conn -e "$sql"
+  (-e  表示 执行)
+
+  //创建表：  sql="create table test.user(
+                      id int unsigned auto_increment primary key,
+                      username varchar(30),
+                      password varchar(30) 
+                      )"
+-----------------------------------------------
+
+
+apache 日志分割的原理： (将每天的日志拿走，在让Apache重新读取配置文件，产生新的日志文件)
+-----------------------logcut.sh------------------------
+#!/bin/bash
+#logcut.sh
+
+yesterday=`date -d yesterday +%Y%m%d`        (昨天的日期)
+
+srclog="/var/log/httpd/access_log"
+dstlog="/var/logbak/access_${yesterday}_log"
+
+mv $srclog $dstlog
+
+pkill -1 httpd
+-----------------------------------------
+
+-----------------------------------logpv.sh----------------------------------
+                #!/bin/bash
+                #logcut.sh
+
+                yesterday=`date -d yesterday +%Y%m%d`
+
+                srclog="/var/log/httpd/access_log"
+                dstlog="/var/logbak/access_${yesterday}_log"
+
+                mv $srclog $dstlog
+
+                pkill -1 httpd
+
+                tmpfile=$$.txt                                     (创建一个临时文件存放 ip 和 num)
+                conn="/usr/bin/mysql -uroot -pkkkkkk"
+
+                cat $dstlog |awk '{print $1}'|sort |uniq -c |awk '{print $2":"$1}' > $$.txt
+
+                for i in `cat $tmpfile`
+                do
+                     ip=`echo $i |awk -F: '{print $1}'`
+                     num=`echo $i |awk -F: '{print $2}'`
+
+                     sql="insert into test.counttab(date,ip,num) values('$yesterday','$ip','$num');"
+
+                     $conn -e "$sql"
+                done
+
+                rm -rf $tmpfile
+                sql="select * from test.counttab;"
+                $conn -e "$sql"
+----------------------------------------------------------------------------------------
+

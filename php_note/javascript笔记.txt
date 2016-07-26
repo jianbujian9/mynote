@@ -1,0 +1,522 @@
+2016 7-14 JS 特效编程 
+
+ js 标签的放置的位置： 将 要包含的文件放在 <head> 头后面，将要进行的操作 放在 body 最后面(放在body 和 html 之间)
+
+ js 的定位： js 是一门基于对象的语言 (基于一些已经存在的对象)
+
+ js 的定义变量： var name="xiaoming";
+
+ js 的变量作用域：
+  1.在函数外面定义的变量，不管 变量前面带不带 var 全部都是全局变量。在函数里面也能使用。
+  2.在函数里面定义的变量，带 var 的是局部变量，不带 var 的是全局变量。
+   //所以 建议：在函数的外面都带 var 函数的里面，全局变量不带 ,局部变量带 var。
+
+输出 变量的两种方法：
+  var name="xiaoming";
+  1.alert(name);           //推荐使用。
+
+  2.document.write(name);       //这段js 脚本代码 在哪儿 ，就输出到哪儿。
+    document.write("<h1>kkkkkkkkkkkk</h1>");   //也可以这么做。
+
+  //其中，document 是在html 页面之上的存在
+   alert(document.documentElement.outerHTML);  //输出 html页面
+
+ document.documentElement     //代表 html　标签
+ document.title            //代表 title 标签
+ document.head             //代表 head 标签
+ document.body            //代表 body 标签
+
+
+js 字符串连接符：+ 
+  //只要两边有一个字符串，它就是字符串连接符。两边都是数字，就是 + 运算符。
+
+js 特效： js 操作样式和标签事件 通过将标签转成元素对象。
+
+js 的十种变量类型：
+ 1.字符串
+ 2.整型
+ 3.浮点
+ 4.布尔
+ 5.数组
+    //一共有四种定义数组的方法：
+     1：
+       var arr=new Array(1,2,3);
+       alert(arr);
+
+     2:
+       var arr=new Array();
+       arr[0]="a";
+       arr[1]="b";
+       arr[2]="c";
+       alert(arr);
+
+     3:
+       var arr=[1,2,3];
+       alert(arr);
+
+     4:
+       var arr=[];
+       arr[0]="a";
+       arr[1]="b";
+       arr[2]="c";
+       alert(arr);
+
+ 6.对象
+
+     三种创建对象的方法
+	//方法一：
+	// alert(window.document);
+
+	//方法二：
+	// var obj=new Object();
+	// alert(obj);
+	//方法三：json 对象
+	var obj={"name":"user1","age":"20"};
+	alert(obj.name);
+
+
+ 7.json 对象
+ 8.NaN
+ 9.null
+ 10.undefined
+
+测试类型：
+ typeof();        //直接就可以使用。
+
+顶级全局方法：
+ parseInt();          //转成整型
+ parseFloat();      //转成浮点型
+ typeof();
+ eval();
+
+ String();       //强制类型转换
+ Number();
+ Array();
+ Object();
+ Boolean();
+   //转布尔类型后哪些为假：
+     0 
+     false
+     ""
+     null
+     undefined
+     NaN
+
+    //转布尔类型的方法：
+     1：Boolean(num);
+     2: !!num
+
+ eval(); //一个字符串内是一个表达式 要执行这个表达式：
+ php实例：
+			 <?php
+			 $str='$a=1+1;';
+			 eval($str);
+			 echo $a;
+			 ?>
+
+---------------------js 中使用 eval ------------
+<script>
+     var str='{"name":"user1","age":"10"}';
+     var obj=eval("("+str+")");           //当将上面的json 表达式加上 () 之后，就可以直接执行了。
+     alert(obj.name);
+</script>
+------------------------------------------------
+
+js 运算符：
+ 1. + 字符串连接符
+ 2, new 创建对象时使用
+ 3, this　本对象
+ 4, in 检查某个属性是否是这个对象里面的
+     var obj=new Object();
+     obj.name="user1";
+     alert("name" in obj);
+
+ 5, instanceof 检查某个对象是否由某个构造函数产生的
+    var obj=new Object();
+    alert(obj instanceof Object);
+
+ 6, delete 不能删除用 var 定义的变量，其它都可以用。
+      num=10;
+      delete num;
+      alert(num);
+
+
+ ----------------------遍历数组--------------------
+ var arr=['a','b','c'];
+
+  // for(var i=0;i<arr.length;i++){
+  //  alert(arr[i]);
+  // }
+
+  for(var i in arr){
+    alert(arr[i]);
+  }
+  ------------------------------------------------
+
+  在js 中，只支持数字下标的数组。没有索引下标，如果有的话，就是数组的对象属性：
+      var arr=[];
+      arr['name']="user1";
+      arr['age']=30;
+      arr['sex']="man";
+
+      for(var i in arr){
+        alert(i+"=>"+arr[i]);
+      }
+
+js 弹窗：
+ 1.alert()     警告`
+ 2.confirm()   确认    //会返回一个布尔值
+ 3.prompt()    提醒    // 需要输入一个东西，并可以返回输入的东西。
+
+ 普通函数和匿名函数：
+   function show(){
+       alert("aaaaaaa");
+   }
+
+   var show=function(){
+       alert("aaaaaaa");
+   }
+
+   //两种定义函数的方式相等。
+
+
+js 内置对象：
+ 1.Math 
+   属性：Math.PI
+   方法：
+        Math.ceil();
+        Math.floor();
+        Math.round();
+        Math.random();       //随机数
+        Math.max();
+        Math.min();
+
+ 2.Date
+ //时间本地化：  
+                 var dd=new Date();
+                 var t=dd.toLocaleString();
+                 alert(t); 
+
+    var dd=new Date();
+    // var y=dd.getFullYear();    //年
+    // var m=dd.getMonth()+1;    //月
+    // var d=dd.getDate();       //日
+    // var h=dd.getHours();      //时
+    // var i=dd.getMinutes();    //分
+    // var s=dd.getSeconds();    //秒
+    // var t=y+"-"+m+"-"+d+" "+h+":"+i+":"+s;
+    var t=dd.toLocaleString();
+
+定时器：
+  var aa=setInterval("函数名()",时间);
+  clearInterval(aa);
+
+超时器：
+  setTimeout("show()",5000);     //一次性的  5 秒后执行 show 执行完了就完了
+  clearTimeout();
+
+字符串对象：
+  属性： length  :字符串长度
+  方法：
+       indexof("字符串")    //字符串首次在出现的位置。(从0 开始)
+       lastIndexof("/");      //  / 最后出现的位置
+       substr(位置,[个数]);     //字符串截取
+       slice(开始的位置，结束的位置);     //字符串截取，但是不包含结束的位置。
+       split("分割符号");     //将字符串分割成数组  split(/\./);   支持正则。
+       search(/正则/);   //查找正则匹配首次出现的位置 匹配不到 返回 -1
+       match(//);
+          ---------------
+            var str="phpxxx  if nooj  php  phpijoijo";
+
+             alert(str.match(/php\S*/g));   //g表示全部匹配   不加的话，匹配到一个就停止了。
+             -----------------
+       replace(//,"");  //正则替换  js 中的向后引用和php 一样使用 $1
+       -----------去除左右的空格----------
+       str.replace(/(^\s*)|(\s*$)/g,"");
+       -------------------------------------
+
+js 数组对象：
+  属性：
+    length  //数组的长度
+  方法：
+     pop()   //删除并返回数组的最后一个元素
+     push()   //在数组的末尾添加一个或几个元素，并返回数组的长度
+     shift()
+     unshift()
+     slice(开始的位置，结束的位置)    //截取数组 不包含结束位置的元素,返回一个子数组
+     concat()    //连接数组
+     reverse()  //翻转数组元素
+     sort() //对纯数字的数组元素排序
+     -------------------------------
+        var arr=[100,3,55,53,66,2];
+        function show(a,b){
+            return a-b;
+        }
+        alert(arr.sort(show));
+    ----------------------------------
+     splice(2,3);   //从位置 2 开始，删除 3 个，并将删除的元素组成新的数组，返回、
+     splice(2,1,[34,52,532,2]);  //将数组填充到原数组的被删除的元素的位置。
+
+获取元素对象的方法：
+1,document.getElementById();
+2,document.getElementsByTagName();
+3,document.getElementsByClassName();
+
+总结元素对象常用的属性：
+ obj.innerHTML;
+ objs.length;
+ obj.outerHTML;
+ obj.innerText;        //同 textContent   但是不推荐使用
+ obj.textContent;   //获取标签之间的字符串
+ obj.tagName;          //获取标签名
+
+ 判断 IE 还是非IE 
+ document.all;        //所有的HTML 的元素、只有IE 支持
+
+ 获取几种高度：
+  1.文档的高  屏幕的文档区域的高
+  document.body.clientHeight
+  2.有效的高  屏幕可视的高
+  document.documentElement.clientHeight
+  3,屏幕的总的高度
+  document.documentElement.scrollHeight
+  4. 滚动的高度
+  document.documentElement.scrollTop          (适用于 ie 和 Firefox)
+  document.body.scrollTop                   (适用于 chrome)
+
+  //返回顶部：document.documentElement.scrollTop=0;
+
+测试一个 div 的高：
+obj.clientHeight;  //本身的高
+obj.offsetHeight;   //包含边框的高
+
+浏览器默认行为：
+ 要求： 点击一个 a　　标签，但是不跳转，只是为了能实现一些功能。：
+   <a href="javascript:;" onclick="document.body.style.background='#f00'">点击页面变成红色</a>
+   <a href="" onclick="alert(1);return false;">点击页面变成红色</a>     //也不会跳转
+
+阻止 submit 的默认的行为
+--------------------------------------------------------
+<body>
+  <a href="javascript:;" onclick="document.documentElement.style.background='#f00'">点击页面变成红色</a>
+    <br>
+    <br>
+  <form action="index.php" onsubmit="return check();">  //只有给 onsubmit　返回一个 false　时，才能阻止跳转
+    user: <input type="text" name="" id="textid">
+    <br>
+    <br>
+    <input type="submit" value="submit">
+  </form>
+</body>
+<script>
+  function check(){
+    var textValue=document.getElementById("textid").value;
+    if(textValue){
+      return true;
+    }else{
+      alert("username is null!!");
+      return false
+    }
+  } 
+</script>
+---------------------------------------------
+
+<form action="index.php" id="formid">
+    user: <input type="text" name="" id="textid">
+    <br>
+    <br>
+    <input type="submit" value="submit">
+  </form>
+</body>
+<script>
+  var formobj=document.getElementById("formid");
+
+  formobj.onsubmit=function(event){
+    var textValue=document.getElementById("textid").value;
+    /*
+    if(textValue){
+      return true;
+    }else{
+      alert("username is null!!");
+      return false
+    }
+    */
+
+    if(!textValue){
+        alert("用户名不能为空！！！");
+        event.preventDefault();
+    }
+  } 
+</script>
+-----------------------------------------------------------
+默认行为：a 标签提交或者是submit表单提交 
+
+js 事件和浏览器对象(BOM)
+ 
+ js 事件：
+  //onabort 图像加载被中断 
+  onerror 当加载文档或图像时发生某个错误 
+  onresize 窗口或框架被调整尺寸         //window.onresize
+  onload 某个页面或图像被完成加载    //window.onload
+
+//与表单有关的
+  onblur 元素失去焦点时
+  onfocus 当元素获得焦点时
+  onselect 文本被选定
+  onsubmit 提交按钮被点击      //对象是 form元素
+  onreset 重置按钮被点击      //对象是 form元素
+  onchange 用户改变域的内容      //对象可以是 text文本域
+
+//与鼠标有关的
+  onclick 鼠标点击某个对象
+  ondblclick 鼠标双击某个对象
+  onmousedown 某个鼠标按键被按下
+  onmousemove 鼠标被移动
+  onmouseout 鼠标从某元素移开
+  onmouseover 鼠标被移到某元素之上
+  onmouseup 某个鼠标按键被松开
+  oncontextmenu   右键上下文菜单         //document.oncontextmenu
+
+//与键盘有关的
+  onkeydown 某个键盘的键被按下
+  onkeypress 某个键盘的键被按下或按住
+  onkeyup 某个键盘的键被松开
+ // onunload 用户退出页面
+
+js 事件方法：
+   text 对象方法：
+     focus();   //在文本域上设置焦点
+     select();  //选取文本域中的内容
+
+event.keyCode  //获取键盘的码
+
+js BOM浏览器对象：
+      Window   
+      Navigator 
+      Screen 
+      History 
+      Location 
+
+Window 对象：
+  属性：
+   frames   窗口数组
+   length   frame 个数
+   name     窗口名字    target="win3"; (框架中有)
+   opener    打开我的那个窗口
+   parent      父窗口
+   top       顶级窗口
+   closed      测试某个窗口是否被关闭
+
+var ss=window.top.frames
+ss[o] //数组中的索引从0 开始，上下左右
+
+  方法：
+open  (目前支持比较糟糕)
+   window.open(URL,name,特性);  //可以返回一个被打开的窗口的对象
+//   myWindow=window.open('','','width=200,height=100')
+     特性：
+       width
+       height
+       top  //你的电脑屏幕的位置
+       left
+  (目前支持的好的就这么几个常用的)
+
+  window.opener   返回打开我的那个原窗口，从而可以控制原窗口
+
+close  //ie chrome 支持 firefox 不支持关闭自己的窗口
+
+scrollTo(x,y);  窗口滚动
+scrollBy(x,y);
+
+
+Navigator  对象 包含有关浏览器的信息
+  属性：
+    appName     //返回浏览器的信息,粗略判断
+    userAgent    // 精确判断
+
+ Screen 当前屏幕的分辨率   
+  属性：
+   width   //屏幕的宽
+   height  // 屏幕的高
+   availWidth   //屏幕有效的宽
+   availHeight  //屏幕有效的高
+
+History  历史对象
+ 属性：
+   length  //返回历史的个数
+ 方法：
+   go(1);  //前进一个历史 forward()
+   go(-1)    //后退一个历史  back()
+   go(-2);  //后退两个历史 
+
+
+Location  对象：
+ 属性：
+ hash 设置或返回从井号 (#) 开始的 URL（锚） 
+host 设置或返回主机名和当前 URL 的端口号。
+hostname 设置或返回当前 URL 的主机名。 
+href 设置或返回完整的 URL。
+pathname 设置或返回当前 URL 的路径部分。
+port 设置或返回当前 URL 的端口号 
+protocol 设置或返回当前 URL 的协议。
+search 设置或返回从问号 (?) 开始的 URL（查询部分）。 
+
+ 方法：
+  reload();   // 重新加载当前的文档
+  replace();//用新的文档替换当前的文档,但不会产生历史 ，使用location.href=""跳转，会有历史 
+
+
+  ---------------------------
+  文档流加载完毕后，不能再通过 事件 往页面中添加内容了。
+  --------------------
+
+  js DOM 对象：
+  ---------------------------
+  万能设置以及获取对象的属性
+  obj.setAttribute("name","xiaoming");
+  obj.getAttribute("name");
+  ----------------------------
+
+  文档内的常用的集合：
+   1.forms集合          对象是: document
+   2.elements集合         对象是： form
+   3.options集合              对象是: select
+   4.rows集合               对象是： table
+   5.cells集合               对象是： table
+   6.images集合   <img src="">       对象是: document
+   7.links集合   <a href=""></a>        对象是: document
+   8.anchors集合  <a name="aa"></a>        对象是: document
+   9.frames集合             对象是：window
+
+   在js 中，改变css 样式：例如 text-decoration 
+     obj.style.textDecoration 
+
+    在js 中，创造一个标签节点：
+     var newopt=document.createElement("option");
+
+  Ajax 对象：可以和别的应用程序取得联系
+-----------------------Ajax 无刷新技术---------------
+1.找到Ajax 对象：xmlHttpRequest 
+ 火狐，谷歌，IE9及其以上：
+  xhr=new XMLHttpRequest();
+ 
+ IE9以下：
+  xhr=new ActiveXObject("Microsoft.XMLHTTP");
+
+2.Ajax属性
+ xhr.responseText;       //Ajax响应
+3.Ajax 方法(get)
+xhr.open("get","index.php?id=23&name=user2",true);   //?id=23&name=user2 通过GET传数据
+xhr.send();
+
+Ajax post 方法：
+ xhr.open("post","index.php",true);
+ xhr.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+ xhr.send("id=23&name=user2");        //通过post传数据
+
+4.Ajax 事件
+xhr.onreadystatechange=function(){
+  if(xhr.readyState==4 && xhr.status==200){
+  //表示成功响应
+  }
+}

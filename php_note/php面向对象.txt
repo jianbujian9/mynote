@@ -1,0 +1,278 @@
+2016-7-9
+   面向对象：
+   class Person{
+
+   }
+
+//类的首字母要大写
+ //类中包含属性(变量) 和方法(函数)
+  构造函数：
+    function __construct(){
+
+    }
+
+类的属性 的作用域： public $name;   在整个类中都可以使用 name : $this->name  
+  
+  析构方法： 
+   function __destruct(){}
+   //当 对象消失的时候，执行，  对象的引用放在了 栈里。遵守栈的先进后出的规则
+
+ 对象链技术：(一次性调用多个方法)
+  $user1->say()->eat()->sleep();
+  ------------------------------------
+  class Person{
+
+  		function say(){
+  		    echo "我是小明";
+  		    return $this;
+  		}
+
+  		function eat(){
+  		     echo "我在吃饭";
+  		     return $this;
+  		}
+
+  		function sleep(){
+  			echo "我在睡觉";
+  			return $this;
+  		}
+  }
+
+  $user1=new Person();
+  $user1->say()->eat()->sleep();
+  ---------------------------------
+
+  //只有一个对象才能调用类中的方法，所以就要求 :$user1->say()  是一个对象，所以，在 say 方法中，就有了: return $this  
+
+ 7-10
+    总结： 全局变量、局部变量、对象属性、超全局变量的作用范围：
+       1.全局变量：整个页面都可以使用，但是，函数里使用全局变量得加 global
+       2.局部变量：函数内部使用
+       3.对象属性：在整个类中使用，包括子类和父类
+       4.超全局变量：(包括：预定义常量和超全局数组)  页面的任何地方都可以使用 
+
+面向对象的三个特性：
+  1.类的继承：
+    子类可以访问父类的成员(包括：成员变量刻成员方法) ,继承的关键字是：extends  ，可以提高代码的重用性。php 支持方法的重写(即：同名函数，子类中的方法会覆盖父类中的方法)
+
+  //假如出现这么一种情况：在子类中，方法被重写了，但是，我仅仅是想在父类的方法后，再添加一些东西：
+    ---------------------
+    class Person{
+          function say(){
+              echo "hello world!!!!";
+          }
+    }
+
+    class It extends Person{
+          function say(){
+              parent::say();                      (parent  代表父类)
+              echo "I'm coming!!!!";
+          }
+    }
+------------------------------------
+
+//有时候，可以不用实例化，直接调用类中的函数： 
+  It::say()
+
+与类有关的测试函数：
+  1.获取对象的类：get_class();        //get_class($user1);  获取对象$user1 的类名
+  2.获取对象的父类：get_parent_class();
+  3.获取对象的属性：get_object_vars();
+  4.获取类的属性：get_class_vars();   //参数是 类名
+  5.获取类和对象的方法：get_class_methods();
+  6.对象或类中是否有 say 方法： method_exists("Person","say");
+  7.对象或类中是否有 name 属性：property_exists("Person","name");
+  8.测试对象是不是属于某类： $user1 instanceof Person;
+  9.是否为对象： is_object($user1);
+
+
+--------------------------------------
+//在语法检测的时候。类中的方法和别的普通的函数都会被放在 代码区 中，不依赖对象的存在而存在。
+但是属性 依赖对象的存在而存在
+ 
+ 通过 var_dump($user1);   就看不到 方法，只看到属性`
+------------------------------
+
+!@@@@@@@@@   需要赋初值的东西全部放在 构造函数 中去。
+@@@@@@@@@@    public  属性能付初值，但是，不能进行运算、
+@@@@@@@@      运算顺序的问题
+
+封装特性：
+  三个修饰词：public | protected |private 
+  public : 本类、子类和外部都可以使用
+  protected : 本类和子类可以使用
+  private : 本类可以使用
+
+抽象类：含有抽象方法的类
+
+abstract class Person{
+      abstract function start();
+}
+
+//子类必须实现父类中的抽象方法
+
+接口：只含有抽象方法
+ interface Person{
+    function say();
+    function run();
+ }
+
+ class Man implements Person{
+     function say(){
+     }
+     function run(){}
+ }
+
+
+多态：
+ --------实例：有一个接口 S ，里面有三个抽象方法，有三个类，A B C 其中，A B 实现了接口，C 没有实现接口，但是，它重写了接口中的所有的方法，这时候，有个函数(不在任何一个类或是接口中) ：
+  function show(S $obj){
+      $obj->start();
+      $obj->run();
+      $obj->stop();
+  }
+    $a=new A();  show($a);   //没有问题
+    $b=new B();  show($b);  //没有问题
+    $c=new C();  show($c);   //有问题
+
+
+魔术方法：
+1.__construct
+2.__destruct
+3.__call
+             //当对象调用的方法不存在的时候，会自动被调用。
+             class Person{
+                  function __call($a,$b){
+
+                  }
+             }
+             // 其中，__call 的参数必须有两个，第一个是被调用的不存在的函数名，第二个是，被调用的函数的参数，会组成一个数组
+4.__get
+    //当你访问一个私有的属性的时候，就将 这个私有属性的值赋值给__get 的参数`
+
+5.__set
+          //一个类中，有一个私有的属性，如归你想通过对象直接修改，就会触发 __set 函数
+          函数的两个参数，第一个是，私有属性的名字，第二个是,你想要修改的所有属性的值，
+
+6.__isset
+7.__unset
+           //在类的外部，查看(isset($user->age);) 或删除 (unset($user->age);) 的时候，就会触发 将私有属性的名字，当作参数，传进去。
+
+8.__tostring
+9.__clone            (在php 中，对象是按引用传递的： $user1=$user  要想达到传值的目的： $user1=clone $user  此时， $user1 的操作就不会影响 $user中的值， )
+    //当 克隆发生的时候，就会自动调用 __clone() 方法
+
+自动加载：
+__autoload
+-------------------------------------------------------
+                function __autoload($className){
+                    include($className.".class.php");
+                }
+
+                $user=new A();
+                $user2=new B();
+                  //就自动加载了(所以就要求我们就类的php文件的名字和类名相同(首字母的大小写))
+-------------------------------------------
+
+关键字：
+1：const   //类常量，可以修饰属性
+  //依赖类的存在  
+  ------------------
+  class Model{
+      const NAME="root";
+
+  }
+     //只要页面包含了一个类：
+     类的外部：
+     Model::NAME;
+     类的内部：
+     self::NAME;
+
+2: static    //可以修饰属性和方法(但是，Php中的一般普通的方法，使用 类就可以直接调用：Person::say();)
+//静态变量依赖 类 的存在
+class Model{
+   static $num;
+   function __construct(){
+       self::$num++;
+   }
+}
+
+$user=new Model();
+echo Model::$num;
+ 
+3: final
+修饰类(不能被继承)和方法(不能被覆盖)
+ 
+PDO 数据库抽象层：
+ 1.PDO类
+ 2.PDO预处理类
+ 3.PDO异常处理类
+
+ ----------------------安装 pdo_mysql 模块
+ 1:php.ini 中 开启pdo_mysql.dll
+ 2:重启apache 
+ --------------
+$pdo=new PDO("mysql:host=localhost;dbname=test","root","kkkkkk");
+$pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE,PDO::FETCH_ASSOC);  //设置默认的结果集数组索引
+
+mysql 的两种机制：预处理和事务机制(myisam 不支持  innodb 支持)
+
+PDO 常用方法；
+
+exec       //执行 增、删、改 操作   并返回影响的行数
+query      //执行 查 操作 并返回一个结果集预处理对象
+lastinsertid   //获得最后一次插入的id
+setattribute    //设置结果集预处理对象的默认数组类型(索引)
+gerattribute     //获取.....
+
+----------------------------------------------------------
+------------------------------警报------------------------
+  try{
+       echo "aaaaaa<br>";
+       throw new Exceptino("this is a warning !");
+       echo "bbbbbbb<br>";
+  }catch(Exception $e){
+      $e->getFile();     //出现警报的文件的地址
+      $e->getLine();        //出现警报的行数
+      $e->getMessage();     //警报的内容
+  }
+----------------------------------------------------
+
+PDO 报错模式：
+PDO::ATTR_ERRMODE
+   1. PDO::ERRMODE_SILENT
+   2. PDO::ERRMODE_WARING
+   3. PDO::ERRMODE_EXCEPTION
+
+
+PDO 预处理类：
+//加入我想批量删除 t1　表中的 id=36,37,38,39,40 的记录
+-----------------------index.php----------------
+   //准备一条 sql 语句
+   $sql="delete from t1 where id=?;";
+   //预处理准备
+   $obj=$pdo->prepare($sql);             //$obj 是预处理类的对象   $pdo 是pdo 类的对象
+   //含有id 的数组
+   $arr=array(36,37,38,39,40);
+   foreach($arr as $val){
+        //绑定值
+        $obj->bindValue(1,$val);        (1 代表第一个问号，$val 是问号应该填写的值)
+        //执行
+       $obj->execute();       
+   }
+   ----------------------------(这种情况中，客户端只是发送了一次完整的 sql 语句 提了速度)
+   使用 bindValue 绑定值的时候注意：
+    这个方法默认绑定的值 是 字符串 (方法的第三个可选的参数)  
+    当 sql 语句是这样的：delete * from t1 where id=?;  //因为 id 在表中的类型是int 所以 mysql 会强制将传进来的值转成int 类型   
+    但是 当 sql 语句是这样的 ： select * from t1 limit ?,?;  此时，要求绑定的值必须是 int 类型
+    所以： $obj->bindValue(1,0,PDO::PARAM_INT);
+
+预处理机制：
+1.预先准备 sql 发送到服务器 上去
+2.给预处理语句绑定值,并设置绑定值的类型
+3.执行预处理语句
+4，如果是查询语句。则获取查询数据：
+ $st->fetchAll();          //获取所有的数据， $st 是预处理 对象
+
+ 预处理也可以获取最新插入的 id 
+   echo $pdo->lastInsertId();

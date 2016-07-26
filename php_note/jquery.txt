@@ -1,0 +1,167 @@
+2016-7-21
+
+  version  1.4.2 
+
+
+jquery 学习：
+1.核心函数
+2.选择器
+3.筛选
+4.文档处理
+5.属性
+6.css
+7.事件
+8, 效果
+9.ajax
+10.工具
+
+
+ 核心函数
+   jQuery()    和 $() 没有什么区别，只是，当可能和别的框架冲突的时候(别的框架中也有 $方法) 可以使用jQuery()代替
+
+js 加载时机
+ 当页面加载完毕时
+   页面上所有的包括图片等，都得记载完成
+   window.onload=function(){}
+
+ 当dom元素加载完毕时
+   只要将各个标签刷出来就行  js 这个时候就可以进行操作了。因为js操作的是一个标签对象，和图片什么的无关。
+   $(function(){
+
+   });  //可以放在body之前，表示，当dom元素加载完成的时候
+
+jQuery 对象访问
+  each()
+  size()    //个数
+  get()          //常用
+  index()  //搜索匹配的元素，并返回相应元素的索引值，从0开始计数。
+
+
+
+
+js元素对象和jquery对象之间的转换：
+
+ //js元素对象转jquery对象
+ var objs=document.getElementsByTagName("h1");
+ $(objs).css({"color":"red"});                    //objs 不加""
+
+ //jquery对象转js对象
+     alert($("#h1id").get(o).outerHTML);
+     alert($("#h1id")[0].outerHTML);
+     //上面两者效果相同
+
+jquery 数据缓存：
+ data()        //可以往一个jquery对象身上藏一个东西。重要 
+ 
+
+ jquery 选择器函数：
+  1.基础
+    1)#id
+    2)ele
+    3).class
+    4)*
+    5)selector1,selector2
+  2.层级
+    1)ancestor descendant        祖先  后代
+    2)parent>child          父子
+    3)prev+next           前一个和后一个
+    4)prev ~siblings           上一个  和后面所有的邻居
+  3。基本
+    1):first
+    2):last
+    3):not
+    4):even
+    5):odd
+    6):eq
+    7):gt
+    8):lt
+  4.内容
+    1):has
+       $('div:has(p)')         //找到含有p 标签的 div
+    2):parent
+  5.属性
+    1)[name]
+    2)[name=user1]
+    3)[name!=user1]
+    4)[name^=user1]
+    5)[name$=user1]
+    6)[name*=er]
+    7)[name=user1][name*=er]        //同时满足:
+  6.子元素
+    1)nth-child          //少有的从1 开始
+    2)first-child
+    3)last-child
+    4)only-child
+  7.表单
+    1):input
+    2):text
+    3):password
+    4):radio
+    5):checkbox
+    6):submit
+    7):reset
+    8):button
+    9):file
+    10):hidden
+  8.表单对象属性
+    1):checked
+    2):selected
+
+实例：表单验证
+1.给表单元素设置blur事件的验证条件
+2.当表单提交的时候，可以触发所有的表单元素的blur事件
+3.查看每一个提醒标签<span> 的display　的状态 ，来设置是否 return false;
+
+   
+   筛选
+     过滤：
+      eq(index)   //获取第ｎ　个元素，位置是从0开始的
+      first()       //获取第一个元素
+      last()      //获取最后一个元素
+      hasClass(class)   //检查当前的元素是否含有特定的类 ，相当于： is("."+class)   返回一个布尔值
+      is()                //返回布尔值
+      filter(expr)   //筛选出与指定的表达式相匹配的元素集合，多个表达式用 , 隔开
+      has()          //保留包含特定后代的元素，去掉那些不含有指定后代的元素。
+      not()            //删除与指定表达式匹配的元素   排除的是完整的jquery对象
+      slice(1,3)  //选取一个匹配的子集     不包含 3
+
+    查找：
+      children()
+         <p>Hello</p><div><span>Hello Again</span></div><p>And Again</p>
+         $("div").children().css({"color":"blue"});
+
+      parent()
+      prev()
+      prevAll()
+      next()
+      nextAll()
+      siblings()
+
+    串联：
+     add()
+     andSelf();  
+
+
+     ------------------mouse事件--------------
+       对于以下的div 布局来说：
+          <div>     
+            <h1>jjjjj</h1>
+            <h1>sssss</h1>
+            <h1>ggggg</h1>
+          </div>
+
+        1.mouseover() 和mouseout()    非常敏感，当鼠标进入div 时，触发 mouseover 接着进入 h1 时，会触发 mouseout 然后紧接着又触发 mouseover
+        2.mouseenter()  和 mouseleve()   则不会出现上面的情况，只要鼠标进入div 块后，不论怎么移动，都不会触发mouseleve() 只有鼠标移除div 块的时候，才会触发 mouseleve()
+        -----------------------------------
+
+        empty()  //清空标签中的内容
+        append()   //向标签中追加
+
+
+  属性：
+   $('img').attr({"src":"a.png"});    //给属性赋值
+   $('img').attr("src");            //获取属性的值
+   $('img').removeAttr("src");          //直接删除属性
+
+css:
+  

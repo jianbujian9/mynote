@@ -1,0 +1,2140 @@
+php编程基础
+
+sublime中的替换
+:%s/班级/学员/g             将班级替换成学员
+
+2016-5-23
+        第一部分：
+默认首页：
+index.php > index.html > index.htm
+ 但不是固定的，可以在Apache的配置文件里的directoryindex 中修改
+
+ 如果是纯的php页面的话，结尾的  ?> 最好不写。
+
+ 变量的好处是，便于修改，修改一次，下文的都跟着修改。
+
+ php比较特殊，php中定义和输出变量，都必须用$ 符号。
+
+php中，变量名严格区分大小写的，但是函数(函数得调用才能生效)名、类名是不区分大小写的。
+所以我们就养成一个习惯：所有的变量名、函数名、类名   都是用小写。
+
+变量的定义：
+$name="小明";
+
+变量的输出：
+echo "$name";   //输出变量的·   在echo中，可以加入HTML标签。
+
+var_dump($arr);  //输出数组，并且打印类型和长度
+
+print_r($arr);     //输出数组的,但是并不打印类型和长度
+
+utf-8 下 ：一个中文是3个字符。GBK 编码下：一个中文是2个字符。
+
+在print_r() 以及 var_dump() 输出数组的时候，在其上下是用<pre>标签：
+
+echo "<pre>";
+print_r($arr);
+echo "</pre>";
+将数组原样输出。
+
+
+          第二部分：
+
+看代码：从上到下，从左到右。(切记不要跳跃性的去看代码！！！！)！！！！！！！！
+
+变量的用法：
+
+1:普通变量：
+$name="小明";
+
+2:可变变量(很少用)：
+$str="name";
+$$str="小明";
+则：如果
+echo $name;    则其结果为：小明。
+
+3:变量引用：(面试常用！！！)
+<?php
+	$a=10;
+	$b=&$a;    // & 是一个地址符，现在$a和$b 是指向同一个地址。
+	$b=20;
+
+	echo $a;
+	echo "<br>";
+	echo $b;
+?>
+
+则其结果：$a=20;$b=20;
+
+$a=3;   //赋值
+$a==$b;  //比较是不是相等,结果是true 或是false 
+
+       第三部分：
+
+正式的php变量：
+
+1:php的八种变量类型：
+ 1)整型
+ 	$a=10;
+ 2)浮点型
+ 	$a=1.4;
+ 3)字符串     放在单双引号里的：
+ 	$a="jkjkjkjkjkjkj";
+ 	$a='jkjkjkjkjkjkj';
+
+ 4)布尔型
+ 	$a=true;
+ 	$a=false;
+
+ 	//布尔类型更多的来自比较的结果。
+
+ 	//用echo输出一个布尔值时：true 是 1   而 false 是空 ，在浏览器上不显示。
+ 	//但是这个false是不同于null类型 的。最好是用var_dump();来输出，顺便可以查看类型。
+ 5)数组
+ 	//给一个变量赋多个值时，是用数组。
+ 	//使用 var_dump();    或  print_r();
+ 	<?php
+
+ 		$arr=array("a","b","c");
+ 		echo "<pre>";
+ 		print_r($arr);
+ 		echo "</pre>";						
+ 	?>
+
+ 6)对象
+ //对象由两部分组成：属性、方法。
+
+ 	class person{
+
+ 		function eat(){
+ 			echo "jkjkjkjkjkj";
+ 		}
+ 	}
+
+ 7)资源
+ 	例如：
+ 	$conn=mysql_connect("localhost","root","kkkkkk");	
+ 	连接数据库的过程，叫做资源。
+ 	//$conn 是一个连接数据库的资源，连接成功了，就成了一个资源。
+ 	资源的罗列：
+ 		1:连接数据库资源   //比如上面的$conn。
+ 		2:文件打开资源
+ 		3:目录打开资源
+
+ 8)null类型
+ //目前基础阶段基本没有什么用。
+
+php中字符串连接符是   .  连接。！！！！！！！
+
+2：isset和empty两个函数的区别：
+	1:isset 变量是否存在。不存在的情况：  //存在返回true
+		1)根本没有申明
+		2)$a=null;
+	2:empty  变量是否为空。为空的情况：    //为空返回true
+		1)false
+		2)空字符串："" 以及"0" 但是"false" 不是空的。
+		3)null
+		4)变量没有定义
+		5)$arr=array();即空数组。
+		6)0
+		7)0.0
+
+
+3：类型测试：
+	1)整型      is_int();      //结果是布尔值
+	2)浮点型    is_float();
+	3)字符串    is_string();
+	4)布尔型    is_bool();
+	//以上四种类型统称标量
+	5)数组      is_array();
+	6)对象       is_object();
+	//以上两种类型是复合类型
+	7)资源       is_resource();
+	8)null        is_null();
+	//以上两种是特殊类型
+
+is_scalar();
+//测试是否是标量
+
+is_numeric();
+//测试是否是数字    测试整型   浮点型
+
+is_callable();
+//测试是否是函数 而不是结构
+
+常用的语言结构：看着像函数，但其实是语言结构。
+	1:echo()
+	2:print()
+	3:array()
+	4:list()
+  5:exit()
+
+	5-24
+4:类型的自动转换和强制转换：
+主要是针对标量的
+1.整型->字符串
+   $num=132;
+   echo $num."hejkj";
+  这么做就自动将整型转为字符串，然后和另一个字符串连接起来了。
+2.字符串->整型
+  $str="123";
+  echo $str+1;
+
+  其结果是124,说明字符串$str 自动转为整型。
+ 3.整型->布尔型
+   $num=1;
+   if($num){
+   		echo "真";
+   } 
+   	其输出的结果：真
+   	这里就将整型转换成了布尔型
+  
+  强制类型转换： 主要指标量
+
+(int)$num    整型
+(float)$num  浮点型
+(string)$num  字符串
+(bool)$num    布尔型
+
+     字符串的单双引号：
+1.php中的字符串的连接倾向于使用单引号。如果字符串中没有变量，就使用单引号。
+2.双引号的使用场合:
+	1)在双引号中放置变量：
+	   $name="user1";
+	   echo "我是{$name},我想吃饭";
+	   //上面的输出如果变成单引号，就不能将user1   输出了，输出的是：{$name}
+	   //变量只有在双引号中能得到解析(但是不能运算)。注意格式：使用{}将变量包围起来。
+
+
+     删除变量：
+unset($num);    //删除变量，不计较变量的类型。
+
+
+ 第一部分：
+
+ 常量的定义：
+//和变量是一样的，但是一旦被定义就不能被修改；
+define("HOST","localhost");   //定义数据库
+define("USER","root");  //定义用户
+define("PASS","kkkkkk"); //定义密码
+//由上可见我们可以使用数据库的配置文件。 
+$conn=mysql_connect(HOST,USER,PASS);
+
+//在mysql数据库中，可以匿名使用test 数据库。所以自已以后上线的网站千万不要使用test数据库。
+
+ 常量的输出：
+	//注意在双引号中使用{HOST}是不能被解析的，能被解析的是变量。
+	//常量只能用  .  来连接字符串。
+echo "my name is ".USER;
+
+
+预定义常量：
+是php给我们定义好的常量。
+PHP_OS         php 所在平台·
+PHP_VERSION      php版本·
+__LINE__           该常量所在的行号
+__FILE__     //当前文件的系统绝对路径   学习框架时有用、、
+__FUNCTION__   该常量所在函数的函数名、
+
+   <?php
+   		function test(){
+
+   			echo __FUNCTION__; 
+
+   		} 
+
+   		test();
+   	?>
+
+   	//则输出结果是：test
+
+M_PI    圆周率、
+
+
+运算符：
+1.一元
+$num++
+$num--
+//先赋值后运算
+--$num
+++$num
+//先运算后赋值
+2.二元
+  算术运算符：
+  + — * / %
+  比较运算符：
+  > < >= <= == != ===  !==
+  逻辑运算符：
+  &&
+  ||
+  ！
+  //&&  || 是短路运算  如果前一项能够决定值，后一项就不会执行了。
+  赋值运算符：
+ = += —= *= /= %=
+3.三元 
+? :
+
+------------------------------------------
+尽管 = 比其它大多数的运算符的优先级低，PHP 仍旧允许类似如下的表达式：if (!$a = foo())，在此例中 foo() 的返回值被赋给了 $a。
+--------------------------------------------
+
+运算符优先级：
+    大体是：算术>比较>逻辑>赋值
+@运算符：
+  屏蔽一些函数的报错；
+  //没有什么意义
+
+--------------------------------
+Note: @ 运算符只对表达式有效。对新手来说一个简单的规则就是：如果能从某处得到值，就能在它前面加上 @ 运算符。例如，可以把它放在变量，函数和 include() 调用，常量，等等之前。
+----------------------------------
+
+数组运算符：
+=>
+给数组加字母下标时：自定义数组下标
+
+$arr=array("user1","user2","user3");
+echo $arr[1];
+就可以取出来  user2
+//索引数组
+
+$arr=array("name"=>"user1","age"=>"123");
+echo $arr['name'];
+就可以取出  user1
+//关联数组
+	
+对象运算符：
+->
+
+  第二部分：
+ 1:流程控制：
+  1) 条件控制：
+  if.....else
+  switch.....case.....break
+
+  2) 循环控制：
+  for
+  while
+//区别在于：for循环要知道循环的圈数，而while循环只关心判断条件是否为真。
+
+ 3) 终止循环控制：
+  break      //结束本层循环
+  continue   //结束本次循环继续下一次循环
+
+
+
+5-25
+
+      第一部分：
+
+中止脚本：
+1.exit();
+2.die();      
+两个用法差不多
+在其之后的程序就不再执行。相当于将后面的注释了。后面的（）可以不加。
+可以在（）中放入一个字符串，结束的时候会打印这个字符串。
+
+
+php的函数：
+
+一：语言结构：
+
+if  for   while  switch   array  echo  print  list  isset  unset 
+foreach  exit  die  include  require  empty 
+//每个后面都有一个()
+二：自定义函数：
+
+自己写的函数：
+
+ function aa(){
+
+}
+
+函数被调用后会生效。
+
+函数aa的形参可以设置默认值：
+例如：
+aa($num=9,$color="red")
+
+//当调用函数时给出实际参数，就优先使用你给的参数。如果没有就使用默认的参数值。
+
+ 函数的返回值：
+
+ 例一：
+
+  function sum($a,$b){
+    echo $a+$b;    
+  }
+  
+  echo "1+2=".sum(1,2);
+  //其输出的结果是：31+2=
+ //后一个echo 输出的过程：先将要输出的内容读取完毕后，整体输出，当读取到sum(1,2)的时候
+ 又遇到一个echo 就先输出了一个3  ，然后再输出1+2=      
+
+ 例二：
+ function sum($a,$b){
+      return $a+$b;
+ } 
+
+ echo "1+2=".sum(1,2);
+ //其输出结果是：
+ 1+2=3
+
+ 函数的结果：
+ 1:直接输出结果：
+   echo  
+ 2：返回一个结果：
+   return
+  //我们推荐使用return 当想输出的时候再输出
+
+  可变个数参数：
+
+  func_num_args();  //传入参数的个数
+  func_get_args();   //传入的参数，会整合成为一个数组。`
+  例如：
+  function sum(){
+      func_num_args();
+      return array_sum(func_get_args()); 
+  }
+   echo sum(1,2,3,4);
+   //其结果是：10
+   
+二：变量函数：
+变量的值等于函数的名字：
+
+function sum($i,$j){
+    return $i+$j;     
+}
+   $a="sum";
+   echo $a(1,3);
+   //其结果是：4
+
+三：变量的作用域：
+1：全局变量
+ 函数外面的是全局变量。
+2:局部变量
+函数内部的是局部变量·
+
+//php中函数内部的参数和外部的参数没有联系才好。里面就是里面，外面就是外面。
+
+如果需要在函数体内改变函数外面的值，比如：$num
+那么就改成  global $num; 
+所以global 关键字的作用是将函数内部的局部变量变成全局变量。
+
+引用参数：传址
+$num=10;
+
+function fun(&$i){
+  $i++; 
+}
+
+fun($num);
+echo $num;
+//其输出结果是：11
+
+四：回调函数：
+回调函数是参数的一个类型。
+如果函数的一个参数是另一个函数的名字 ，那么这个参数就叫回调函数 。
+//参见 回调函数.php
+
+五：静态变量：
+例如：想要知道一个函数被调用几次，可以有以下两种方法：
+1：使用全局变量
+2：使用静态变量
+
+六：文件包含：等于将一个文件的代码拷贝到另一个文件中。
+1：include(); 
+2:require("inc.php");
+
+两者的区别是：include如果包含出错，下面的代码还能继续执行。而require则不行。
+
+ 七：递归函数：
+ 函数里面调用本函数。
+
+ 递归函数里只需要用if 而不需要使用for   while 
+//参见 递归函数实现数的连加.php
+函数的分类：
+1：自定义函数
+2：回调函数
+3：变量函数
+4: 递归函数
+
+
+5-26
+
+第一部分：
+
+函数的调用顺序：
+在加载index.php文件后，现将<?php  ?>中的内容预加载一遍，先进行语法检测，如果语法有误，就会报错
+这时，程序还没有执行。然后才是执行脚本程序。
+
+show();
+
+function show(){
+  echo "aaaaaa<br>"; 
+}
+
+show();
+
+//这么做会输出两行 aaaaaa
+
+1:php执行过程：
+ 1)加载页面
+ 2)语法检测(1.语法检测     2.加载函数)
+             //所以函数调用可以写在函数之前。即：函数的调用的位置无所谓了。
+ 3)执行脚本
+
+
+第二部分：
+
+   数组：
+   1.数组的定义和遍历
+   2.数组函数
+
+   数组定义：
+
+$arr=array(1,3,2);
+
+$arr=array("name"=>1,3,2,3,"age"=>5,100=>6,7);
+
+//下标：name 0 1 2 age 100 101 
+//如果数组下标不是自定义下标，那么下标永远是上一个数字下标(这个数字下标可以是自定义的数字下标)加一。
+
+数组取值：
+echo $arr['age']; 
+echo $arr[100];
+
+
+ 数组赋值：
+ echo $arr['name']=30;
+
+使用赋值的方法定义数组：
+$arr[]=1;
+$arr[]=2;
+%arr[]=3;
+
+//当给一个数组赋值时，当发现没有这个数组的时候，会自动创建一个新的数组。
+
+  数组的遍历：只取出值，不取出键值。
+
+1. 当键值是整数时，使用for循环，遍历数组。  
+2.当下标是字符串时：使用foreach($arr as $key=>$val){} 来遍历数组。
+3:
+while(list($key,$val)=each($arr)){
+    echo $key.$val;
+    echo "<br>";   
+}
+    也可以遍历下标非整数的数组。
+
+//推荐使用foreach
+
+
+多维数组：（最好不要超过三维数组）
+
+1.一维数组：$arr=array(1,2,4);
+2.二维数组：$arr=array(1,2,array(1,3));
+3.三维数组：$arr=array(1,2,array(1,2,array(1,2)));
+
+二维数组的遍历：
+
+  $arr=array("a","b",array("c","d"));
+
+  foreach($arr as $val){
+    if(is_array($val)){
+      foreach($val as $val2){
+        echo "{$val2}<br>"; 
+      }
+    }else{
+      echo "{$val}<br>";    
+    }
+  }
+
+//推荐使用一维和二维数组
+
+5-27
+       第一部分：
+
+超全局数组：在php页面的任何地方都能使用，不管是函数里面还是函数外面。
+ $_SERVER
+ $_GET
+ $_POST
+ $_REQUEST
+ $_FILES   文件上传的时候可以感知到。
+ $_COOKIE
+ $_SESSION
+ $GLOBALS
+
+$_SERVER
+查看服务器详细信息：
+print_r($_SERVER);
+
+$_GET
+
+获得get方式从别的页面提交过来的参数、
+俩个页面之间通讯：
+1.表单传值(1.get :通过地址栏传参的 2.post:不通过地址栏传参   推荐使用post);
+2.a标签传值(get);
+    <a href='index.php?y={$preyear}&m={$premonth}' style='text-decoration:none'>上一月</a>
+
+    传的值是属于href的内容的一部分。
+
+$_POST
+获取表单post过来的数据。
+
+$_REQUEST  可以接收get或post两种方式传过来的表单数据
+//但是不建议使用，因为速度慢，能用get就用get，能用post就用post.
+
+$_COOKIE
+同一个变量在多个页面获取到。
+
+$_SESSION
+同一个变量在多个页面获取到。
+
+$_FILES
+获取表单中的文件，并生成一个数组。
+
+$GLOBALS
+  $GLOBALS[_SERVER] 
+  $GLOBALS[_GET]
+  $GLOBALS[_COOKIE]
+  $GLOBALS[_POST]
+  $GLOBALS[_FILES]
+  $GLOBALS[_REQUEST]
+
+借助$GLOBALS可以在函数内部改变全局变量的值：
+
+ <?php
+    $username="user1";   //$username 是$GLOBALS的一个元素。
+
+    function show(){
+        $GLOBALS["username"]="hhh";    //$GLOBALS 可以放在任何地方。
+    }
+
+    show();
+
+    echo $username;
+
+ ?>
+
+// 其输出结果是：hhh
+
+这么做和
+function show(){
+   global $username;
+   $username="hhh";
+}
+是一样的效果。
+
+          第二部分：
+          自定义pre快捷键
+          将php插件中的for(-).sublime-snippet文件该名为：pre.sublime-snippet,内容如下：
+...........................................................................
+    <snippet>
+    <content><![CDATA[
+    echo "<pre>";
+    print_r(${1:\$arr});
+    echo "</pre>";
+    ]]></content>
+    <tabTrigger>pre</tabTrigger>
+    <scope>source.php</scope>
+    <description>for …</description>
+    </snippet>
+.......................................................................
+php数组键值操作和数组统计函数：
+
+1.数组函数：
+ 1)数组的键值操作函数 
+ 2)统计数组的元素和唯一性
+ 3)使用回调函数处理数组的函数
+ 4)数组的排序函数
+ 5)拆分、合并、分解与结合函数
+ 6)数组与数据结构
+ 7)其它有用的数组处理函数
+
+ 数组的键值操作函数
+ 1.array_values();
+ 2.array_keys();
+ //都返回一个数组，分别返回值和键。
+ 3.in_array();      检查一个值是不是在数组中。返回一个布尔值、
+ 4.array_key_exists();      检查一个键是不是在数组中。返回一个布尔值、
+ 5.array_flip();     交换数组中的键和值。返回一个新的数组。
+ 6.array_reverse();  数组中的值反转。使得数组的前后顺序反过来.返回一个数组。
+
+ 统计数组的元素和唯一性
+ 1.count();    统计数组中的元素的个数。
+ 2.array_count_values();  统计数组中所有值出现的次数,即值重复的值个数、
+ 3.array_unique();    删除数组中重复的值。
+
+5-28
+      第一部分：
+
+使用回调函数处理数组的函数：
+1.array_filter();     //详细见手册,他会保留相应键值、回调函数在传入的数组后。
+2.array_map();                                        回调函数在传入的数组前，
+//使用foreach 就好，使用函数反而有些麻烦。
+
+数组的排序函数：
+1.sort(); 升序 但是不保留key
+2.rsort();  降序  但是不保留key
+3.asort(); 升序  保留key
+4.arsort(); 降序  保留key
+ksort   krsort   对键值进行排序
+5.natsort();  自然数排序，针对的是带数字的字符串。
+6.natcasesort();  忽略大小写，其余的和natsort一样都是升序排序。
+7.array_multisort();  用一个数组对另一个数组进行排序。·
+  
+  strlen($val);  获取字符串$val 的长度。
+
+拆分、合并、分解和结合函数：
+1.explode();    拆分                           分隔符参数在前、
+2.join();   合并  //implode();   两者相同       分隔符参数在前、
+3.array_slice();
+//截取数组的一部分。
+ $arr=array("aa","bb","cc","dd","ee");
+$arr2=array_slice($arr,0,3);  //从aa开始截取3个
+
+  $arr3=array_slice($arr,-2,2);  //从dd开始向后截取两个。
+  //不论第二个参数是正还是负。都是向右截取。·
+4.array_splice();  //将一个数组进行裁剪，返回一个新的数组，而原数组保留剩余的元素。
+
+ $arr=array("aa","bb","cc","dd","ee");
+
+  $arr2=array_splice($arr,0,3,array("gg","ff"));    //array("gg","ff");  表示填补被裁剪的部分。
+
+5.array_combine();
+// 传入两个数组，前一个数组会变成后一个数组的下标。
+6.array_merge();//  传入两个数组，然后根据下标拼接，有下标相同的，后面的会覆盖前面的。如果下标是默认的，那就前后拼接。``
+`
+7.array_intersect();  交集，
+   $c=array_intersect($a,$b);          //返回一个数组·
+   //$c 的结果是:以$b为参照物，$a中和$b中都有的。 索引下标是$a 中的下标
+
+8.array_diff();   差集
+
+$c=array_diff($a,$b);                  //返回一个数组。
+   //$c 的结果是:以$b为参照物，$a中有的但是$b中没有的。 下标是$a 中的下标、
+
+并集：array_unique(array_merge($a,$b));
+
+数组与数据结构：
+
+1.array_pop();//从数组的最后弹出(删除)一个值 并将该值返回 ·
+2.array_push(); //从数组的最后压入(添加)一个值 并返回新的数组的长度·
+3.array_shift(); //从数组的前面弹出一个值
+4.array_unshift(); //从数组的前面压入一个值。
+
+ 其它有用的数组函数：
+1.$a=array_rand($arr);
+//$a是随机在$arr中取出的key值。然后可以根据key值取出$arr中的值、
+2.shuffle($arr);
+//随机将数组打乱。
+3.range();
+............................................................
+  !!$arr=range('a','z');//$arr是一个包含从a到z的字母的数组、
+  ...........................................................
+
+4.array_sum();// 计算数组中所有值的和。
+
+        第二部分：
+
+
+字符串知识点：
+1:字符串输出：
+    1.echo 和print的区别：
+      echo "aaaa","ddddd","jjjjj";
+      print "kkkk";
+
+    //即：echo可以后面放多个参数 参数之间使用，隔开。print后面只能放一个函数。
+    2.格式化输出：
+      1)printf:
+    $a="sss";
+    $b="dddd";
+    printf("---%s---%s---",$a,$b);   //%s:字符串。%d:数字。 %f:浮点数。比如： %.2f 小数点后两位。
+      2)sprintf:
+    $a="sss";
+    $b="dddd";
+    $str=sprintf("---%s---%s---",$a,$b);  //sprintf不直接输出，而是赋值给一个变量。
+    echo $str;
+
+2:字符串格式化输出：
+  1.去除空格和字符串填补函数：
+    1)ltrim(); //去除左空格
+    2)rtrim(); //去除右空格
+    3)trim();  //去除字符串首尾处的空白字符(或者其它字符·)  当用户注册时，应该将其左右两边的空白字符砍去。
+    4)str_pad();//使用另一个字符串填充字符串为指定长度。
+    5)str_repeat();//重复一个字符串
+
+3:字符串大小写转化：
+    1.strtolower();
+    2.strtoupper();
+    3.ucfirst();
+    //echo ucfirst("jjjjj hhhhh");   结果是：Jjjjj hhhhh
+    4.ucwords();
+    //echo ucwords("jjjjj hhhhh");   结果是：Jjjjj Hhhhh
+
+4:与html标签相关联的字符串函数：
+    
+    当我们将页面上的东西往数据库表里存的时候，1：要转义 2：转实体、
+    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  1.nl2br();//将换行\n转换成<br>,并返回。
+  //注意：字符串使用双引号。单引号会原样输出。
+  echo nl2br("jkjkj\njjkljkl\n");
+
+  2.htmlspecialchars();//  转实体。将"  <  >  &  转成HTML实体。
+
+  3.addslashes(); //转义   在 '   "   \  的前面加上  \      默认php开启:即：在将字符串从别的页面取出来后会自动转义。
+
+  4.stripslashes();// 去掉addslashes默认加的\
+
+  5.strip_tags();//去掉HTML标签，当然也可以保留一部分。第二个参数是要保留的标签。
+
+      $str="<div><span><a>hjihjkhkjhjhh</a></span></div>";
+      echo strip_tags($str,"<span>");    //保留<span>标签。
+
+  注意：建议在数据插入数据库之前进行三道把控：
+  1：允许使用部分UBB代码    标签的过滤。
+  2：addslashes();
+  '  "    \ 前加\
+  3：htmlspecialchars();   防止对数据库造成破坏 。
+  '  "  <   >  &   转成实体。防止对数据库造成破坏。
+
+
+5:其它字符串格式化函数：
+   1.strrev();// 字符串翻转
+   2.strlen();//字符串长度
+   3.number_format();//以千位分隔符方式格式化一个数字
+   4.md5();  //字符串加密··
+   5.str_shuffle();//随机打乱一个字符串，并输出。
+
+   5-29
+   第一部分：
+
+   .................................
+字符串和正则表达式：
+
+1:字符串比较函数：
+   1.strcmp();
+   2.strcasecmp();
+   3.strnatcmp();
+   4.strnatcasecmp();
+
+........................................................
+   echo ord("B");   //输出B的ASCII码对应的值。
+   echo chr(27);    //输出B
+   ...................................................`o
+
+字符串的分割和拼接
+1.explode();// 将字符串分割成数组    explode('|',$str); 
+   
+   preg_split();  //正则拆分。
+
+2.implode();  // 将数组拼接成字符串     同：join();  join 是  implode 的别名。
+
+字符串截取:
+1:substr();//使用的方式同array_slice();生成一个新的字符串，
+2:mb_substr();//宽字符截取，和substr相比，mb_substr多一个参数，就是当前程序的编码。中英文都可以 。
+  以上的截取不够智能化。
+
+查询字符串重的字符的位置：
+1.strpos();  // 从左往右查找第一次出现的位置·
+2.strrpos();  // 从左往右查找，最后一次出现的位置。
+
+字符串的替换：
+1.str_replace();
+比如：$str='php is very much!php php';
+    将php替换为linux   :    echo str_replace('php','linux',$str,$num);
+    替换发生的次数可以通过$num 这个变量获取到。
+    echo $num;   //结果是3
+
+  .............................................
+  记住，当php手册里的函数的参数是这样的：int &$num  ,则，必须传进来一个变量。
+  ....................................................................
+
+
+支持多字节：
+mb_substr();  //需要注明当前编码
+mb_strpos();
+mb_strrpos();
+mb_strstr();
+mb_strtoupper();
+mb_strtolower();
+
+ 5-30
+       第一部分：
+
+字符串拆分常用函数；
+1.pathinfo();  //返回文件路径的信息
+2.parse_url();   //解析URL
+3.parse_str();   //将字符串解析成多个变量         parse：解析
+
+正则表达式：
+
+正则表达式是用于描述字符排列和匹配模式的一种语法规则，它主要用于字符串的模式分割，匹配，查找和替换操作。
+php中正则表达式一般是由正规字符和一些特殊字符联合构成的一个文本模式的程序性描述。在这儿，我们使用perl兼容正则表达式。  
+...............................................
+
+正则替换的时候尽量使用单引号。
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+正则表达式的组成：
+1：原子     //能够实实在在匹配到东西的
+2:元子符   //是用来修饰原子的
+3: 模式修正符
+
+原子：
+0)任意一个字符：
+.
+1)单个字母，数字  //可以用\w来代替
+
+a-z,0-9,A-Z    
+2)
+[abc]   它里面的 代表任意一个字符   a 或  b 或  c
+
+[^abc]    对[abc] 取反   
+3)
+()   组成一个单元
+4)
+5)普通转义字符
+\w   匹配字母、数字、下划线(一个)
+  $sub="www.baidu.com";
+   $ptn='/\w*\.\w*\.\w*/';               //正则实例1.php
+
+\d   代表任意一个数字
+\D   代表任意一个非数字
+\W    除了字母、数字、下划线外的任意一个字符。
+\s    匹配空白字符，空格，tab
+\S    除了空白字符，空格，tab    （一个字符·）
+6)转义字符
+ \*    
+ \.   代表一个普通的  . 
+ \/
+ \[   \]
+ \(  \)
+
+
+元子符：
+*     0个、1个、多个
++     一个  多个
+?     0个  一个
+|      或
+^     以后面的什么开头
+$    以前面的什么结尾
+\b    词边缘               //见  正则实例3.php
+\B    非词边缘
+{2}   2个原子紧紧连接在一起的·
+{2,}  2个及其以上原子·
+{2,5}  2-5个前面的原子。
+
+模式修正符：
+常见的：/正则表达式/U
+i  忽略大小写
+m   视为多行
+s   视为一行    为了使  .  能够匹配到 \n 这一换行符。可以使用s
+U   贪婪模式  ，最大化匹配。更加细化。   如果不加U的话，就是模糊化匹配。
+e   替换的时候用，可以用函数加工向后
+.............................................................................................`
+    //加上了e之后，用作替换的字符串单引号中就会按照函数进行处理。即：这串字符串得是一个表达式。
+...................................................................
+向后引用：
+
+   $str='12-05-2016';
+   $ptn='/(\d+)-(\d+)-(\d+)/';
+
+   $rep='$3-$1-$2';
+
+   $str2=preg_replace($ptn,$rep,$str);
+
+   echo $str2;
+
+   //将12-05-2016   的格式转换为：2016-05-12
+
+.....................................................................
+
+将UBB代码的[] 转变为：<>
+
+参见：UBB标签转化为html标签.php
+
+.................................................................
+字符串正则表达式函数：
+匹配与查找：
+  1.preg_match();              //preg_match($ptn,$sub,$arr)    $arr返回搜索的结果。
+  2.preg_match_all();
+  3.preg_grep();              //用于匹配数组
+替换：
+  preg_replace();
+分割与连接：
+  preg_split();  // 正则表达式中什么都不写就是用空来拆。  $arr=preg_split('//',$str);
+
+5-31:
+                  第一部分；
+
+1:数学函数
+2:日期函数
+3:错误处理
+
+
+
+数学函数：
+1.max();
+2.min();
+注意：参数有两种：1：多个数字，2：一个由多个数字组成的数组。
+3.mt_rand();
+4.ceil();  //向上取整
+5.floor();  //向下取整
+6.round(); //四舍五入
+7.pi();   //圆周率        和预定义常量M_PI;有相同的效果。
+
+日期函数：
+1:time();   //离1970年1月1号0点0分0秒已经过去了多少秒(时间戳)。 格林尼治时间。
+
+2:date();  // 与strtotime相反，将时间戳转化为字符串日期               不带时间戳就是当前时间。
+
+3:strtotime();  //将给定的字符串日期转时间戳`
+
+4:microtime();//微秒数。
+    1秒=1000毫秒=10^6微秒
+
+    ///..................................................................
+    microtime(1);     //返回一个浮点类型的时间戳  方便数学运算。
+......................................................................
+
+
+.....................................................
+在c:\windows 中的php.ini 中修改默认时区为：PRC 然后重启Apache： httpd -k restart
+..........................................................
+
+date的参数：
+
+Y：2016
+y:16
+m:05
+n:5   不带前导零的月
+d:31
+j:不带前导零的日
+w:周几
+t:一个月有多少天
+L：是否为闰年         平年为：0  闰年：1
+                  //能够被4整除，同时如果能被100整除，那么就必须被400整除。就是闰年、
+                  if(($year%4==0 && $year%100!=0)||$year%400==0){
+                    return true;
+                  }
+
+H:时(24小时制)
+h:时（12小时制）
+i:分(带有前导零的)
+s：秒
+
+更改和获取时区：
+date_default_timezone_get();
+date_default_timezone_set();
+    
+    中国所在时区： PRC
+
+ 实例：万年历；   //例子中的  for 循环中有一个很巧妙的 $i=1-$week  详见实例   万年历.php
+实现的技术点 :
+ 1:几年几月几日
+ 2:周日-周六
+ 3：一号是星期几
+ 4:这个月有多少天
+ 5:下一年和上一年
+ 6:下一月和上一月
+
+
+ php的错误处理：
+ 1.关闭和开启报错
+ 2.报错级别
+ 3.报错的地方在哪？
+
+
+ 关闭和开启报错：
+display_errors = On
+display_errors = Off
+
+ 报错级别：
+ E_ALL            //所有的错误 
+ E_ERROR         //严重错误 
+ E_WARNING      //警告错误 
+ E_PARSE       //语法错误 
+ E_NOTICE     //提示错误 
+
+报什么级别的错误：
+error_reporting = E_ALL
+
+E_ALL & ~ E_NOTICE   //报所有的错误，除了提示错误。      ~  意思是：除了什么。
+
+报错的方法：
+display_errors=Off
+//是否从浏览器上输出错误
+
+log_errors = Off
+
+//是否将错误输出到自定义的文件里。
+//自定义的文件：  
+
+    error_log = d:\phperrorlogs\php.log
+
+    错误日志文件为：d:\phperrorlogs\php.log 
+  
+  6-1
+           第一部分：
+
+图片处理：
+    
+    使用场景：
+      1:验证码
+      2:缩放
+      3:裁剪
+      4:水印
+
+GD库支持的主流的图片格式：gif  jpg  png  ,此外，还支持freetype字体。
+
+gif:支持动态图片
+jpg:普及率高，有损压缩
+png:支持透明背景，无损压缩。
+
+php创建图像的五个步骤：
+  1：创建画布资源
+  2：准备颜色涂料
+  3:在画布上画图像或文字
+  4：输出最终图像或保存最终图像
+  5:释放画布资源
+
+一个php页面，一张图。
+/////////////..................................../////////////
+资源有创建的一刻，就有释放的一刻
+、、、、、、、、、、、、、、、、、、、、、、、、、
+
+html 包含别的文件有两种方式：相对路径，网站绝对路径
+php  调用别的php文件的两种方式：相对路径， 系统绝对路径
+
+////////............................................////////////////
+  //1：创建一个画布
+  $im=imagecreatetruecolor(400,300);
+  //2:添加颜色
+  $white=imagecolorallocate($im,255,255,255);
+
+  //3：画图
+  imageellipse($im,200,150,200,200,$white);
+  //4:输出图像或是保存
+  header("content-type:image/png");
+  imagepng($im);
+  //5:关闭资源
+  imagedestroy($im);
+
+  6-3
+        第一部分：
+
+GD库的知识
+
+   绘制图像：
+     imagefill();    // 区域填充
+
+     imagesetpixel();    //画一个像素
+
+     imageline();     //画一条线
+
+     imagerectangle();   //画一个矩形
+
+     imagefilledrectangle();   //画一个矩形并填充
+
+     imagepolygon();       //画一个多边形
+
+     imagefilledpolygon();     //画一个多边形并填充
+
+     imageellipse();     //画一个椭圆
+
+     imagefilledellipse();      //画一个椭圆并填充
+
+     imagearc();       //画一条弧线
+
+     imagestring();    //水平的画一条字符串
+     
+     imagestringup();   //垂直的画一行字符串
+
+     imagechar();    //水平的画一个字符
+
+     imagecharup();   //垂直的画一个字符
+
+     imagettftext();    //用truetype字符向图像画一个字符串   推荐使用。比imagestring 和imagechar 好。
+
+
+ php验证码的设计：
+
+  页面跳转：
+    1：php 跳转
+      header("location:index.php");
+         有局限，前面不能有输出。
+    2: javascript 跳转  。
+      echo "<script>location='index.php'</script>";
+      echo "<script>location='http://www.baidu.com'</script>";
+          推荐使用。
+
+          js弹窗：
+          echo "<script>alert('验证码有误。')</script>";
+
+获取图片的宽高
+  1：getimagesize();    //获取图像大小。
+             不需要图片资源即可获取图片的大小等信息·
+  2: imagesx();      //获取图片的宽度
+  3: imagesy();    //获取图片的高度
+        需要图片资源
+
+如何将已有的一个图形成资源：
+ 1.imagecreatefrompng();
+ 2.imagecreatefromjpeg();
+ 3.imagecreatefromgif();     
+
+图片缩放函数：    //在尽量保证图像不失真的情况进行缩放。
+imagecopyresampled();              //resample:  重新取样
+
+图片等比例缩放：
+
+图片裁剪函数：
+imagecopyresampled();
+
+图片水印函数：
+imagecopy();  
+
+6-4
+      第一部分：
+
+文件处理函数：
+
+  一：文件的操作
+  二：目录操作
+  三：文件上传
+  四：多文件上传
+  五：文件下载
+  六：文件上传和下载系统
+
+
+  测试函数：
+  filetype();    //1,dir 文件夹 2,file 文件  返回值：dir/file
+  is_dir();
+  //是否是目录
+  is_file();
+  //是否是文件
+  file_exists();
+  //文件或目录是否存在
+  filesize();
+  //文件大小，目录大小是0
+
+文件操作：
+   
+   $filename='a.txt';
+   新建文件
+   fopen($filename,'w');
+   //以写的方式打开一个文件，如果不存在，则创建之。
+   //返回一个文件资源，所以当不使用的时候，就要注意关闭。·
+
+   删除文件
+   unlink($filename);
+   //返回true或者false。
+
+   修改文件名
+   rename($filename,'b.txt');
+   //返回true或false
+
+   文件复制
+   copy($filename,'test/b.txt');
+   //test 是一个dir ，复制，可以对复制过来的文件重命名。
+  //返回true/false 
+
+   文件移动
+   //实现方法：先复制，后删除、
+
+   文件打开
+   fopen($filename,'打开模式');   //返回一个资源。
+  打开模式：
+  r r+ w w+ a a+
+
+    r+模式下：的写入，会从指针所在的地方，向后覆盖写入。
+    w 模式下：写入，会将所有的都清除，然后开始写。  如果没有，就创建。
+    a 模式下：写入，接着已有的东西写。打开文件，如果没有，就创建。
+
+   文件的读取
+   fread(文件资源,读取的字节数);  
+    //返回读取到的字符串。     //这种方式的优点是，可以指定一次读入的文件的大小。
+
+//下面三个是不需要文件资源的。
+  file();    //返回一个数组，每一行是一个元素。
+  readfile();  //直接输出一个文件。
+  file_get_contents();   //返回一个字符串，将整个文件读入一个字符串。然后可以对这个返回值，加工。
+
+
+
+   文件的写入
+   fwrite(文件资源,写入的字符串);
+   //返回写入的字符数。
+
+   file_put_contents(文件名,写的内容,[$flag]);
+   //当$flag的值为：FILE_APPEND 时，就是，追加写入。
+   //如果文件不存在，则创建之。
+
+ 关闭文件
+
+rewind(文件资源);  //将指针移动到文件头。
+feof(文件资源); — 测试文件指针是否到了文件结束的位置
+
+[实例：留言板]
+
+目录操作：
+
+ 创建目录
+ mkdir(目录名);
+ 删除目录 
+ rmdir(目录名);  //当文件夹为空的时候，才能这么删除成功、
+ //两者都返回布尔值。
+ 
+路径有关的函数：
+ basename();    //返回路径的文件名
+ dirname();     //返回路径的目录名
+ realpath();   //返回规范化的绝对路径名、
+ DIRECTORY_SEPARATOR;  //当前系统的目录分隔符：windows下：＼　　linux下：/
+ PATH_SEPARATOR;
+ pathinfo();
+ parse_url();
+ parse_str();
+
+遍历目录：listdir();
+使用一个递归函数
+
+目录大小：totdir();
+循环，递归得到每一个文件的大小，然后，相加。
+
+读取目录：
+1:$ds=opendir(目录名);  //形成目录打开资源
+2:$file=readdir($ds);   //读取成功，返回文件名，失败，返回false.
+ 
+ while($file){
+    echo $file."<br>";
+ }
+//将一个目录下的文件都取出来。、
+
+删除目录：deldir();
+
+复制目录：copydir();
+
+移动目录：movedir();
+
+关闭文件资源：
+closedir(打开的资源);
+
+手中的八个函数：
+1：图片缩放函数
+2:图片水印
+3:验证码
+4：遍历目录：
+5：目录大小
+6：删除目录
+7：移动目录
+8:复制目录
+
+6-6
+   第一部分：
+
+1.文件上传和下载
+2.数据库操作
+
+  文件上传
+   文件上传的方式只能是：post   ,get 方式是用来串小数据的。
+   <form action="???" method="post" enctype="multipart/form-data">
+   <input type="file" name="">
+   </form>
+
+//enctype="multipart/form-data"  文件上传必须有的编码
+
+上传的文件通过超全局数组：$_FILES 获取；
+
+在上传页面结束后，php会将缓存的文件删除。所以，使用函数：move_uploaded_file($srcfile,$dstfile);
+将上传的文件转存到别的位置。
+
+ 卡，上传文件的大小或类型。但是，即使你不自定义大小，在php.ini中也有限制：
+ upload_max_filesize = 200M
+ 还有表单最大的上传文件的大小：post_max_size = 80M
+ 后者应该大于前者。
+//这两个值是硬限制。 当超过前种限制时：$_FILES['file']['error']=1
+//当超过后种限制时。数据根本就传不过来。
+
+$_FILES['file']['error']的值的含义：
+0：上传成功
+1:大小超过upload
+2:大小超过表单中的MAX_FILE_SIZE
+  <input type="hidden" name="MAX_FILE_SIZE" value="10000">
+3:上传一部分
+4：没有上传文件
+空：大小超过post
+
+多文件上传：
+for循环
+
+   文件下载：
+常见的数据格式：
+1、图片文件
+image/jpeg  image/gif  image/jpg  image/png
+2、纯文本和HTML
+text/plain  text/html
+3、二进制文件
+application/octet-stream
+4、音频格式
+audio/mpeg
+5、视频格式
+video/avi
+video/x-ms-wmv
+
+
+为了兼容所有的浏览器：
+header("content-type:image/png");  //application/octet-stream 用以代表所有的文件类型。
+header("content-disposition:attachment;filename='a.txt'");
+header("content-length:30KB");
+readfile('a.txt');
+
+[实例：文件上传和下载]
+
+数据库管理系统-dbms
+
+mysql数据库：
+1、mysql设计
+2、mysql操作
+
+
+  mysql设计部分：
+
+-------------------------
+表的行叫：记录
+表的列叫：字段
+-------------------------
+id   name   pass           //表结构:规定了各个字段该写什么、
+1    user1   123
+2    user2   456
+
+数据库基本指令：
+ 1：net stop mysql  //关闭mysql
+ 2: net start mysql   //开启mysql
+ 3: mysql -uroot -pkkkkkk  //登录mysql
+ 4: show databases;   //列出所有数据库
+ //mysql 的语句末尾得用 ; 结束
+ 5：use test;  //使用test数据库，（可以用于切换数据库）
+ 6: show tables;   //列出所有的表。前提是要切换到某个数据库中去。
+ 7: desc user;    //查看表结构或表字段。
+ 8: select * from user;      //查看所有的字段以及下面对应的表记录。
+ 9: exit;    //退出终端。
+
+ mysql基础篇：
+
+  一、 数据库操作指令：
+  1.查看数据库
+  show databases;
+  2.创建数据库
+  create database y1;
+  3.切换数据库
+  use y1;
+  4.删除数据库
+  drop database y1;
+
+  二、 表操作
+  1.查看表
+  show tables;
+  2.创建表
+  mysql> create table user(
+    -> id int,
+    -> name varchar(30),
+    -> pass varchar(30)
+    -> );
+Query OK, 0 rows affected (0.02 sec)
+  3.查看表字段
+  desc user;
+  4.查看表数据    //查看字段对应的记录。
+  select * from user;
+  5.修改表名
+  rename table user to user1;
+  6.删除表
+  drop table user1;
+
+
+  mysql 设计篇：
+
+1.表的字段类型：
+2.表字段属性
+3.表对象管理
+4.表的类型及存储位置
+5.表的默认字符集
+6.创建索引
+
+表字段类型：
+1.数值
+int 整型    //占用4个字节，int(10)  表面上看，和存储需求无关。
+//int(3)与长度无关，不够3位时，前面补0,默认看不见，
+float 浮点型
+
+2.字符串
+char(n)   //比较快   支持255个字符   占n个字节  实际存储n
+varchar(n)  //比较节约空间    存多少占多少  最多65535字节  实际存储L+1
+//后面都可以跟显示多少.
+
+text      //65535个字节   实际存储L+2
+longtext  //42亿字节     实际存储L+4
+
+3.日期
+//暂时不学了，建议存储日期的时候，存储整型的时间戳。
+date   //年月日
+time   //时分秒
+datetime   //年月日时分秒
+year   //年
+
+
+
+
+6-7
+    第一部分：
+
+//数据库记录操作(增删改查)
+
+数据库基础篇
+  1.字段属性
+    1：unsigned     //无符号的 全是整数  ：最大40多亿
+    2：zerofill     //零填充    必须和unsigned 配合使用、int(3)  当位数不够的时候0填充。
+    3: null    //这一列值允许为null
+    4: not null   //这一列值不允许为null 一旦是空就替换成default
+    5: default  //和 not null 配合使用，not null使用就得用default 否则 not null就没有意义。
+    6: auto_increment  //自增，一般id使用。
+
+------------------------------------
+primary key     //主键  主键不能重复、
+--------------------------------
+
+增加字段：alter table user add age int unsigned;
+
+//建表语句。
+mysql> create table t1(
+    -> id int unsigned auto_increment primary key,
+    -> name varchar(30),
+    -> sex varchar(5) not null default 'man',
+    -> age int unsigned
+    -> );
+Query OK, 0 rows affected (0.01 sec)
+
+mysql服务器的字符集是什么，数据库的字符集是什么，表的字符集就是什么。
+
+查看服务器的基本信息
+  \s
+
+Server characterset:    utf8    //服务器字符集·
+Db     characterset:    utf8    //数据库字符集
+Client characterset:    utf8     //客户端字符集  在什么地方登录什么就是客户端。
+Conn.  characterset:    utf8    //连接字符集
+
+用命令查看数据库字符集：
+show create database test;
+
+用命令查看表字符集：
+show create table t1;
+
+在php中修改客户端和客户端连接字符集：
+mysql_query("set names utf8");
+
+
+my.ini 中客户端和服务器字符集设置：
+[mysql]
+default-character-set=utf8
+//客户端和连接字符集
+
+[mysqld]
+character-set-server=utf8
+//服务器、数据库和表字符集
+
+collation-server = utf8_general_ci
+//服务器、数据库和表的校验字符集
+
+数据表字段索引：
+
+1.主键索引
+2.普通索引
+
+检测sql语句的优化情况：
+desc select * from user where id=3\G  //加\G将表颠倒一下。
+//rows 1 代表找一个id=3 的人，检索一行就找到了、
+
+desc select * from user where name="c"\G
+//rows 5
+
+
+创建普通索引：
+mysql> create table t1(
+    -> id int unsigned auto_increment primary key,
+    -> name varchar(30),
+    -> index in_name(name)                        //in_name 是一个自定义的名字。
+    -> );
+Query OK, 0 rows affected (0.01 sec)
+
+
+mysql的帮助手段：
+? show   //查看show的用法(？和show之间有空格)
+
+查看表中的所有的索引：
+show index from t1;
+show index from t1\G    //后面不加  ；
+
+后期增加和删除普通索引：
+
+1:添加
+ alter table t1 add index in_name(name);
+
+2:删除
+ alter table t1 drop index in_name;
+
+
+ -------------------------------------
+mysql 的优化：给where 后的字段加索引 但是，where 后面能用id就用id ，快。
+---------------------------------------
+
+后期维护数据表字段：
+1：增加字段
+mysql> alter table t1 add age int;
+Query OK, 4 rows affected (0.02 sec)
+
+alter table t1 add uid int after id;//增加一个uid字段，放在id字段的后面(after id)
+
+2: 修改字段
+mysql> alter table t1 modify age int not null default 20;
+Query OK, 4 rows affected, 4 warnings (0.01 sec)
+
+ //修改字段名：
+ alter table t1 change name username varchar(30);
+//不会影响索引
+
+3: 删除字段
+mysql> alter table t1 drop age;
+Query OK, 4 rows affected (0.02 sec)
+ 
+mysql 结果化查询语言：
+1.DDL  //数据定义语言  create drop alter
+2.DML   //数据操作语言  insert update  delete 
+3.DQL   //数据查询语言  select 
+4.DCL   //数据控制语言  grant commit rollback 
+
+增-insert:
+insert into user(name) values("name2");
+//对于新增加的记录，自增的id 是曾经出现过的最大值+1；
+
+改-update:
+update t1 set name='g' where id=5;  //当更改多个值的时候，字段间使用 ， 隔开。
+//where 必带。否则会影响整张表。
+
+删-delete：
+delete from t1 where id=4;
+
+-----------
+truncate table t1;
+//truncate命令是会把自增的字段还原为从1开始的 、并清空表记录。
+-----------------------------
+
+delete from t1 where id in(1,3,5);  //将id 等于1,3,5的记录都删除。
+delete from t1 where id=1 or id=3 or id=5;
+//效果等同于上一句。
+
+delete from t1 where id>=3 and id<=5;
+delete frmo t1 where id between 3 and 5;  //效果等同于上一句。
+//where 必带。否则会影响整张表。
+
+查-select:
+select (字段) from (表) where (字段)=值;
+
+--------------------------------
+//在mysql中，只有= 没有==
+----------------------------------
+只删除完表里的记录，但是没有删除表，其自增的id 如果被删前最大是6，那么新插入的记录，id从7开始。
+
+mysql> select * from t1;
+Empty set (0.00 sec)           //表里的记录已经是空的了。
+
+mysql> insert into t1(name) values('f');
+Query OK, 1 row affected (0.00 sec)
+
+mysql> select * from t1;
++----+------+
+| id | name |
++----+------+
+|  6 | f    |
++----+------+
+1 row in set (0.00 sec)
+--------------------------------
+
+
+!!@@@@@@@@@@@@@@@@@@@@@@@@@@!!!!!!!!!!!!!!!!!!
+查询：
+###########################@@@@@@@@@@@@@@@@!!!!!!
+1.选择特定的字段
+select id,name from t1;
+select * from t1;   //查所有的字段。 
+
+mysql 支持给字段取一个简写的名字(别名)：
+  mysql> select name n,id,pass p from user where id=2;
+  +-------+----+------+
+  | n     | id | p    |
+  +-------+----+------+
+  | user2 |  2 | 222  |
+  +-------+----+------+
+  1 row in set (0.00 sec)
+
+2.给字段取别名 -as
+  //字段和字段之间必须用 , 字段和别名之间使用 as 或者空格、
+  mysql> select name n,id,pass p from user where id=2;
+  //相当于：
+  // select name as n,id,pass as p from user where id=2;
+
+3.distinct关键字的使用
+//取出唯一值(当有多个重复的值的时候)
+select distinct name from user;
+  
+      mysql> select * from user;
+    +----+-------+--------+
+    | id | name  | pass   |
+    +----+-------+--------+
+    |  1 | user1 | 111    |
+    |  2 | user2 | 222    |
+    |  3 | user3 | 333    |
+    |  4 | user4 | 444    |
+    |  5 | user5 | 555    |
+    |  6 | user4 | 33333  |
+    |  7 | user4 | 666666 |
+    |  8 | user4 | 88888  |
+    +----+-------+--------+
+    8 rows in set (0.00 sec)
+
+    mysql> select distinct name from user;
+    +-------+
+    | name  |
+    +-------+
+    | user1 |
+    | user2 |
+    | user3 |
+    | user4 |
+    | user5 |
+    +-------+
+    5 rows in set (0.00 sec)
+
+4.使用where条件进行查询
+select name from user where id>=3 and id <=5;
+
+5.查询空值null
+          mysql> select * from user;
+          +----+-------+--------+
+          | id | name  | pass   |
+          +----+-------+--------+
+          |  1 | user1 | 111    |
+          |  2 | user2 | 222    |
+          |  3 | user3 | 333    |
+          |  4 | user4 | 444    |
+          |  5 | user5 | 555    |
+          |  6 | user4 | 33333  |
+          |  7 | user4 | 666666 |
+          |  8 | user4 | 88888  |
+          |  9 | user4 | NULL   |
+          | 10 | user4 | NULL   |
+          +----+-------+--------+
+          10 rows in set (0.00 sec)
+
+          mysql> select * from user where pass is null;  //因为null 是不能比较的。
+          +----+-------+------+
+          | id | name  | pass |
+          +----+-------+------+
+          |  9 | user4 | NULL |
+          | 10 | user4 | NULL |
+          +----+-------+------+
+          2 rows in set (0.00 sec) 
+
+
+6.between and 的用法：
+
+7.in 的使用
+
+8.搜索  ：like 的使用方法： //模糊匹配
+select * from user where name like '%4%';
+select * from user where name regexp '.*4.*';
+
+select * from user where name like '%4%' or name like '%5%';  //包含4 或5的。
+select * from user where name regexp '(.*4.*)|(.*5.*)';
+
+//name 中包含4 的记录。  % :表示任意多个字符。
+支持正则表达式：
+select * from user where name regexp '.*4.*';  //包含4 的。
+
+9. 使用 order by 对查询结果进行排序
+  asc:升序
+  desc:降序
+
+  -------------------------------------
+  mysql> select * from user order by id desc;
++----+-------+--------+
+| id | name  | pass   |
++----+-------+--------+
+| 10 | user4 | NULL   |
+|  9 | user4 | NULL   |
+|  8 | user4 | 88888  |
+|  7 | user4 | 666666 |
+|  6 | user4 | 33333  |
+|  5 | user5 | 555    |
+|  4 | user4 | 444    |
+|  3 | user3 | 333    |
+|  2 | user2 | 222    |
+|  1 | user1 | 111    |
++----+-------+--------+
+-----------------------------------
+
+10.使用limit限定输出个数(分页实现)
+
+mysql> select * from user order by id desc limit 1;
++----+-------+------+
+| id | name  | pass |
++----+-------+------+
+| 10 | user4 | NULL |
++----+-------+------+
+
+mysql> select * from user order by id desc limit 0,3;
++----+-------+-------+
+| id | name  | pass  |
++----+-------+-------+
+| 10 | user4 | NULL  |
+|  9 | user4 | NULL  |
+|  8 | user4 | 88888 |
++----+-------+-------+
+
+
+mysql 常用函数  ----select   //应该尽量少的使用mysql中的函数，交给php做
+
+1.concat()  函数  ：//字符串连接符
+
+          mysql> select concat('a','-','b');      //select 有输出的作用
+        +---------------------+
+        | concat('a','-','b') |
+        +---------------------+
+        | a-b                 |
+        +---------------------+
+        1 row in set (0.00 sec)
+
+2.rand()    //求随机数
+   
+   select * from user order by rand() limit 1;
+   //先将记录随机打乱，然后去第一个。以达到你取一个随机记录的效果。
+
+3.count  统计个数
+select count(*) from user;  //官方优化的计算表的总的行数。
+//最次也得用主键：select count(id) from user;
+select count(id) from user where name='user4';  //统计user4的个数
+
+
+4.sum  求和
+select sum(id) from user where name='user4';  //复合要求的id之和
+
+5.avg  求平均
+select avg(id) from user;
+
+6.max    求最大值
+select max(id) from user;
+
+7.min   求最小值
+select min(id) from user;
+
+8. group by 分组聚合的使用  //多用于计算排名
+select name,count(id) from mess group by name;
+//先根据name进行分组，然后利用count(id) 进行聚合
+//分组聚合，要单个是没有意义的。
+select name,count(id) tot from mess group by name order by tot desc;//必须先分组后排序。
+
+      mysql> select name,count(id) from mess group by name having count(id)>=5;
+      +-------+-----------+
+      | name  | count(id) |
+      +-------+-----------+
+      | user1 |         6 |
+      +-------+-----------+
+
+      //分组后的条件必须用having 而不能用where.  having 是在分组聚合的结果上再进行判断。必须写在group by之后。
+
+//只是分组是没有意义的，必须有聚合(count  sum  avg  max min 都可以用作聚合)
+//如果没有聚合，就只留第一条记录.
+
+9.多表查询
+  1.普通多表查询
+  2.嵌套查询(子查询)
+  3.左链接       右链接
+
+
+  查询的倾向：普通  > 左链接 > 嵌套
+
+--------------------------------------
+    需求：论坛用户和帖子统计：
+
+    创建两个表：
+    user表：
+    mysql> create table user(
+        -> id int unsigned auto_increment primary key,
+        -> name varchar(30),
+        -> age int
+        -> );
+
+    mysql> select * from user;
+    +----+-------+------+
+    | id | name  | age  |
+    +----+-------+------+
+    |  1 | user1 |   29 |
+    |  2 | user2 |   24 |
+    |  3 | user4 |   25 |
+    |  4 | user6 |   26 |
+    |  5 | user3 |   51 |
+    +----+-------+------+
+
+    post表：
+    mysql> create table post(
+        -> id int unsigned auto_increment primary key,
+        -> uid int unsigned,                                  //user表的id
+        -> title varchar(200),
+        -> content text
+        -> );
+
+    mysql> select * from post;
+    +----+------+------------------------+-------------------------+
+    | id | uid  | title                  | content                 |
+    +----+------+------------------------+-------------------------+
+    |  1 |    2 | jjj                    | jkjuiouweir22           |
+    |  2 |    3 | eeretjj                | ereererereir22          |
+    |  3 |    3 | eeretj33333333333333j  | eresdfsdfsdfafir22      |
+    |  4 |    4 | eeeeerrrrr11           | erfasdfaf8888888fafir22 |
+    |  5 |    4 | hhhhhhhhhhhhhh         | e111111111111111111     |
+    |  6 |    1 | hhhhhh444444hhh        | edfaaf43444411          |
+    |  7 |    1 | hhdsfdsfshhhh444444hhh | edfdfdfaaf43444411      |
+    |  8 |    5 | hhdsf0000              | 999hjjoj3444411         |
+    +----+------+------------------------+-------------------------+
+
+    结果1：谁发的什么帖子
+
+    mysql> select user.name,post.title,post.content from user,post where user.id=post.uid;
+    +-------+------------------------+-------------------------+
+    | name  | title                  | content                 |
+    +-------+------------------------+-------------------------+
+    | user1 | hhhhhh444444hhh        | edfaaf43444411          |
+    | user1 | hhdsfdsfshhhh444444hhh | edfdfdfaaf43444411      |
+    | user2 | jjj                    | jkjuiouweir22           |
+    | user4 | eeretjj                | ereererereir22          |
+    | user4 | eeretj33333333333333j  | eresdfsdfsdfafir22      |
+    | user6 | eeeeerrrrr11           | erfasdfaf8888888fafir22 |
+    | user6 | hhhhhhhhhhhhhh         | e111111111111111111     |
+    | user3 | hhdsf0000              | 999hjjoj3444411         |
+    +-------+------------------------+-------------------------+
+
+    结果2：谁发的帖子的个数
+
+    mysql> select user.name,count(post.id) tot from user,post where user.id=post.uid group by user.name;
+
+    +-------+-----+
+    | name  | tot |
+    +-------+-----+
+    | user1 |   2 |
+    | user2 |   1 |
+    | user3 |   1 |
+    | user4 |   2 |
+    | user6 |   2 |
+    +-------+-----+
+
+----------------------------------------------------------------------------------------
+
+左链接  ://将需要完全显示的放在左边。
+ 
+ (表1) left join (表2) on 条件;
+
+//一个表全部显示，另一个表中的和前表有联系的显示，没有的显示：null
+
+      mysql> select user.name,post.title from user left join post on user.id=post.uid;
+      +-------+------------------------+
+      | name  | title                  |
+      +-------+------------------------+
+      | user1 | hhhhhh444444hhh        |
+      | user1 | hhdsfdsfshhhh444444hhh |
+      | user2 | jjj                    |
+      | user4 | eeretjj                |
+      | user4 | eeretj33333333333333j  |
+      | user6 | eeeeerrrrr11           |
+      | user6 | hhhhhhhhhhhhhh         |
+      | user3 | hhdsf0000              |
+      | user7 | NULL                   |
+      +-------+------------------------+
+
+------------------------------------------------
+将发帖子的人显示出来：  (普通查询)
+        mysql> select distinct user.name from user,post where user.id=post.uid;
+        +-------+
+        | name  |
+        +-------+
+        | user2 |
+        | user4 |
+        | user6 |
+        | user1 |
+        | user3 |
+        +-------+
+
+还可以通过嵌套查询实现：
+ 
+ select name from user where id in(select uid from post);
+
+ //好理解，但是，只能查单表的数据
+---------------------------------------------------------------
+
+         ############第二部分##############
+
+php操作数据库
+
+1.php连接mysql数据库服务器的函数
+2.php判断mysql错误的函数
+3.php选择mysql数据库的函数
+4.php选择数据库字符集的函数
+5.php发送sql语句的函数
+6.php处理结果的一些常用函数
+7.php释放结果集，关闭数据库连接的函数
+8.其它mysql函数
+
+php操作数据库；
+ 
+ php连接数据库
+ $conn=mysql_connect("localhost","root","kkkkkk");
+
+ 选择数据库
+ mysql_select_db("test");
+
+ 设置客户端和连接字符集
+ mysql_query("set names utf8");
+
+ sql 语句
+ $sql="insert into t1(username,password) values()";
+ //查询字符串不应以分号结束。
+
+-----------------------------------
+  $username="user1";
+  $password="123";
+
+  $sql="insert into t1(username,password) values('{$username}','{$password}')";
+  //注意：当values()里的参数是变量的时候，变量的外面要加''
+  --------------------------------
+
+ 执行这条sql语句
+ mysql_query($sql);
+
+ //mysql_query() 仅对 SELECT，SHOW，EXPLAIN 或 DESCRIBE 语句返回一个资源标识符，如果查询执行不正确则返回 FALSE。对于其它类型的 SQL 语句，mysql_query() 在执行成功时返回 TRUE，出错时返回 FALSE。非 FALSE 的返回值意味着查询是合法的并能够被服务器执行。这并不说明任何有关影响到的或返回的行数。 很有可能一条查询执行成功了但并未影响到或并未返回任何行。 
+
+ 释放连接资源
+ mysql_close($conn);
+
+ 从结果集中取数据
+ mysql_fetch_assoc   //关联数组  (推荐使用)
+//一次取一行，没得取了，返回false，所以，可以使用while循环，将所有的都取出来。
+
+while($row=mysql_fetch_assoc($resault)){
+   echo "<pre>";
+   print_r($row);
+   echo "</pre>";
+}
+
+ mysql_fetch_row    //索引数组
+ mysql_fetch_array   //混合数组
+ mysql_fetch_object   //对象
+
+ 释放结果集
+ mysql_free_result($result);
+
+
+ mysql_insert_id();
+//刚刚插入的记录的id
+
+ mysql_affected_rows();  //取得前一次 MySQL 操作(insert update delete)所影响的记录行数
+
+ mysql_num_rows(结果集);   //取得结果集中的数目(此命令仅对select有效)
+ //这是在已经有了结果集的情况下，使用。
+ //如果只是单纯的像知道表的行数：select count(*) from t1;
+
+  *[实例1]
+  用户分页显示
+  //参见示例：用户分页技术.php
+
+  *[实例2]
+  用户模块管理
+  1.用户查看
+  //index.php
+
+  2.用户添加
+  //add.php
+  //insert.php
+
+  3.用户删除
+  //del.php
+  
+  4.用户修改
+  //edit.php
+  //update.php
+
+  6-10  cookie 和session技术
+
+ 解决多个页面使用同一个变量 
+ 1.变量放在一个文件中
+    参见：方案1
+
+ 2.变量放在数据库表中
+ 3.所有的a标签带值
+ 4.所有的form表单带值
+
+
+ 实际的解决方案:cookie 或session
+
+ 技术点：
+ 1.一个文件可以实现多页面共享同一个变量
+ 2.多页面跟踪同一个文件
+
+ cookie技术:(cookie 文件是存在客户端上的)
+
+ -----------------------------------------------
+ cookie技术的实现过程：
+    1.通过登录页面，将$username传到index.php页面
+    2.在index.php(服务器端)页面中设置cookie:    setcookie("username","user1",0,"/");
+    3.将设置的cookie放置在客户端
+    4.当用户访问别的页面(或者是刷新)的时候，将cookie带过去，
+    5.别的页面通过超全局数组：$_COOKIE['username']  获取到值。
+ -----------------------------------
+
+   1.设置cookie
+   setcookie("username","user1",0,"/");
+   //username:cookie的名字
+   //user1:$_COOKIE['username] 的值
+   //0 :表示当关闭浏览器的时候，删除cookie文件
+   // 第三个参数也可以是：time()+7*86400  :表示在7天后删除cookie文件
+   // "/" 表示在网站的根目录下的所有的php页面都可以取得$_COOKIE['username']
+   
+   2.删除cookie
+   setcookie("username","",time()-3600,"/");
+   //time()-3600：表示cookie在一个小时之前就过期了，那么就达到了删除的目的
+
+  3.查看cookie
+   print_r($_COOKIE);
+
+   session 技术：(存放在服务器端，每次页面都会在服务器上的固定位置，将session取出来)
+
+   1.设置session
+   session_start();    //每个页面都有，即：每个页面询问一下：id号(session_id())
+   $username="user1";
+   $_SESSION['username']=$username;
+
+//会自动在客户端产生一个cookie，name=PHPSESSID  id:就是卡号`
+//在本页面存的session，不用再次刷新，就可以立刻取出来
+
+   2.查看session
+   print_r($_SESSION);
+
+   3.删除session
+   session_start();
+   //每页都有
+
+   session_unset();
+   //清除$_SESSION数组中的数据
+
+   session_destroy();
+   //销毁session
+
+   setcookie(session_name(),"",time()-3600,"/");
+   //销毁客户端的卡号     session_name() :不在php.ini 中设置的话，是一个不变的值，  PHPSESSID
+
